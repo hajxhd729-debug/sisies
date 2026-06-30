@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Tasneem — Businesses</title>
+<link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjogIlRhc25lZW0gQnVzaW5lc3NlcyIsICJzaG9ydF9uYW1lIjogIlRhc25lZW0iLCAiaWQiOiAiLyIsICJzdGFydF91cmwiOiAiLi9wb3J0YWwuaHRtbCIsICJzY29wZSI6ICIuLyIsICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLCAib3JpZW50YXRpb24iOiAicG9ydHJhaXQiLCAiYmFja2dyb3VuZF9jb2xvciI6ICIjZmFmN2YyIiwgInRoZW1lX2NvbG9yIjogIiM1YTQ2MzIiLCAiZGVzY3JpcHRpb24iOiAiQ29tYmluZWQgZGFzaGJvYXJkIGZvciBTaXNpZXMgYW5kIFNwYWNlLUNvLiIsICJpY29ucyI6IFt7InNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lJSEJ5WlhObGNuWmxRWE53WldOMFVtRjBhVzg5SW5oTmFXNVpUV2x1SUcxbFpYUWlJSGRwWkhSb1BTSXhNREFsSWlCb1pXbG5hSFE5SWpFd01DVWlQangwY21GdWMyWnZjbTA5SW5SbGVIUXZZM055WnlJZ1ptbHNiRDBpSTJVMU5EUTJNeUlnTHo0OEwzTjJaejQ9IiwgInNpemVzIjogIjE5MngxOTIiLCAidHlwZSI6ICJpbWFnZS9zdmcreG1sIiwgInB1cnBvc2UiOiAiYW55In1dfQ==">
+<meta name="theme-color" content="#5a4632">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" onerror="window._chartLoadFailed=true;"></script>
+<script>
+  // Apply saved theme before first paint to avoid a flash of the wrong theme.
+  (function(){
+    var t = localStorage.getItem('portal_theme');
+    if(t === 'dark') document.documentElement.setAttribute('data-theme','dark');
+  })();
+</script>
+<style>
+  :root{
+    --bg:#faf7f2; --card:#ffffff; --ink:#2a2017; --sub:#6a5b48;
+    --accent:#5a4632; --green:#1f8f4e; --red:#c0392b; --border:#e7ddd0;
+  }
+  :root[data-theme="dark"]{
+    --bg:#181410; --card:#241e18; --ink:#f3ece1; --sub:#a8967d;
+    --accent:#c79a6b; --green:#3fcf82; --red:#ff7a6e; --border:#3a3024;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--ink);padding:20px;transition:background .2s ease,color .2s ease;}
+  h1{font-size:20px;margin:4px 0 2px;}
+  .sub{color:var(--sub);font-size:13px;margin-bottom:20px;}
+  .topbar{display:flex;justify-content:flex-end;gap:8px;margin-bottom:6px;}
+  .icon-btn{background:var(--card);border:1px solid var(--border);color:var(--ink);border-radius:9px;padding:7px 11px;font-size:13px;cursor:pointer;}
+  .icon-btn:active{opacity:.7;}
+
+  @keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+  .reveal{opacity:0;animation:fadeUp .55s ease forwards;}
+
+  /* ---- Hero ---- */
+  .hero{
+    background:linear-gradient(135deg,#6b5440 0%,#4a3a29 55%,#3a2c1e 100%);
+    border-radius:18px;padding:26px 24px;margin-bottom:18px;color:#fff;position:relative;overflow:hidden;
+    box-shadow:0 10px 32px rgba(58,44,30,.25);
+  }
+  .hero::before{
+    content:'';position:absolute;top:-60px;right:-60px;width:220px;height:220px;border-radius:50%;
+    background:radial-gradient(circle,rgba(255,255,255,.10),transparent 70%);
+  }
+  .hero-greet{font-size:13px;color:rgba(255,255,255,.72);margin-bottom:4px;}
+  .hero-name{font-size:22px;font-weight:700;margin-bottom:18px;}
+  .hero-label{font-size:12px;color:rgba(255,255,255,.65);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;}
+  .hero-val{font-size:40px;font-weight:800;letter-spacing:-.01em;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;}
+  .hero-val .unit{font-size:16px;font-weight:500;color:rgba(255,255,255,.65);}
+  .trend{font-size:13px;font-weight:600;padding:3px 9px;border-radius:20px;display:inline-flex;align-items:center;gap:4px;}
+  .trend.up{background:rgba(46,201,126,.18);color:#7be3ad;}
+  .trend.down{background:rgba(224,85,85,.18);color:#ff9a8e;}
+  .trend.flat{background:rgba(255,255,255,.12);color:rgba(255,255,255,.7);}
+  .hero-sub{font-size:12px;color:rgba(255,255,255,.55);margin-top:10px;}
+  .hero-skel{height:40px;width:200px;border-radius:8px;background:linear-gradient(90deg,rgba(255,255,255,.08) 25%,rgba(255,255,255,.18) 37%,rgba(255,255,255,.08) 63%);background-size:400% 100%;animation:shimmer 1.4s ease infinite;}
+
+  .insight{margin-top:14px;padding:11px 14px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:10px;font-size:13px;line-height:1.4;display:none;}
+  .insight .ic{margin-right:6px;}
+
+  .record-banner{display:none;align-items:center;gap:8px;background:linear-gradient(90deg,#ffd76a,#ffb347);color:#3a2c1e;font-weight:700;font-size:13px;padding:9px 14px;border-radius:10px;margin-bottom:14px;box-shadow:0 4px 14px rgba(255,179,71,.35);}
+  .stale-banner{display:none;align-items:center;gap:8px;background:#fff3cd;color:#7a5c00;border:1px solid #ffe7a0;font-weight:600;font-size:12px;padding:8px 14px;border-radius:10px;margin-bottom:14px;}
+
+  #confetti-canvas{position:fixed;inset:0;pointer-events:none;z-index:60;}
+
+  /* ---- Goal ring ---- */
+  .goal-row{display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
+  .goal-ring-wrap{position:relative;width:104px;height:104px;flex:0 0 auto;}
+  .goal-ring-wrap svg{transform:rotate(-90deg);}
+  .goal-ring-bg{fill:none;stroke:var(--border);stroke-width:9;}
+  .goal-ring-fg{fill:none;stroke:var(--accent);stroke-width:9;stroke-linecap:round;stroke-dasharray:283;stroke-dashoffset:283;transition:stroke-dashoffset 1.1s cubic-bezier(.22,1,.36,1);}
+  .goal-pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:var(--ink);}
+  .goal-info{flex:1;min-width:160px;}
+  .goal-info .gl{font-size:12px;color:var(--sub);margin-bottom:3px;}
+  .goal-info .gv{font-size:15px;font-weight:700;}
+  .goal-edit{font-size:11px;color:var(--sub);background:none;border:1px solid var(--border);border-radius:7px;padding:4px 9px;cursor:pointer;margin-top:6px;}
+
+  /* ---- 3D tilt ---- */
+  .biz-card{transform-style:preserve-3d;will-change:transform;}
+  .biz-card .sheen{position:absolute;inset:0;border-radius:14px;background:linear-gradient(120deg,rgba(255,255,255,0) 30%,rgba(255,255,255,.35) 45%,rgba(255,255,255,0) 60%);background-size:250% 250%;background-position:120% 0;opacity:0;transition:opacity .2s;pointer-events:none;}
+  .biz-card{position:relative;overflow:hidden;}
+
+  /* ---- Login gate ---- */
+  #gate{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:50;}
+  .login-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;width:280px;text-align:center;box-shadow:0 8px 28px rgba(0,0,0,.08);}
+  .login-box .lock{font-size:28px;margin-bottom:6px;}
+  .login-box h2{font-size:16px;margin:0 0 16px;}
+  .login-box input{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:9px;font-size:15px;margin-bottom:10px;background:var(--bg);color:var(--ink);}
+  .login-box button{width:100%;padding:10px;border:none;border-radius:9px;background:var(--accent);color:#fff;font-size:14px;font-weight:600;cursor:pointer;}
+  .login-box button:active{opacity:.85;}
+  .login-err{color:var(--red);font-size:12px;margin-top:8px;display:none;}
+  #app{display:none;}
+
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px;}
+  @media (max-width:520px){.cards{grid-template-columns:1fr;}}
+  .biz-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;text-decoration:none;color:inherit;display:block;transition:transform .12s ease, box-shadow .12s ease;}
+  .biz-card:active{transform:scale(.98);}
+  .biz-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.06);}
+  .biz-name{font-size:17px;font-weight:600;margin-bottom:2px;}
+  .biz-tag{font-size:12px;color:var(--sub);}
+  .biz-stat{margin-top:12px;font-size:22px;font-weight:700;}
+  .biz-stat .unit{font-size:13px;font-weight:500;color:var(--sub);}
+
+  /* ---- Skeleton shimmer ---- */
+  .skel{height:20px;width:120px;border-radius:6px;margin-top:12px;background:linear-gradient(90deg,#eee2d4 25%,#f6efe5 37%,#eee2d4 63%);background-size:400% 100%;animation:shimmer 1.4s ease infinite;}
+  @keyframes shimmer{0%{background-position:100% 50%;}100%{background-position:0 50%;}}
+  .skel-box{height:26px;width:70%;border-radius:6px;background:linear-gradient(90deg,#eee2d4 25%,#f6efe5 37%,#eee2d4 63%);background-size:400% 100%;animation:shimmer 1.4s ease infinite;}
+
+  .panel{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:16px;}
+  .panel-title{font-size:14px;font-weight:600;color:var(--sub);text-transform:uppercase;letter-spacing:.03em;margin-bottom:12px;}
+  .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+  @media (max-width:560px){.grid-3{grid-template-columns:1fr;}}
+  .stat-box{border:1px solid var(--border);border-radius:10px;padding:12px;}
+  .stat-label{font-size:12px;color:var(--sub);margin-bottom:4px;}
+  .stat-val{font-size:19px;font-weight:700;}
+  .stat-val.green{color:var(--green);}
+  .err{color:var(--red);font-size:12px;margin-top:10px;}
+  .footer-row{display:flex;align-items:center;justify-content:space-between;margin-top:14px;flex-wrap:wrap;gap:8px;}
+  .updated{font-size:11px;color:var(--sub);}
+  .refresh{font-size:12px;color:var(--sub);background:none;border:1px solid var(--border);border-radius:8px;padding:6px 12px;cursor:pointer;}
+  .refresh:active{opacity:.7;}
+  .chart-wrap{position:relative;height:220px;}
+  .chart-empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--sub);font-size:13px;}
+  .chart-empty .ce-icon{font-size:26px;opacity:.6;}
+
+  /* ---- Activity feed ---- */
+  .feed-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);}
+  .feed-item:last-child{border-bottom:none;}
+  .feed-icon{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex:0 0 auto;background:var(--bg);}
+  .feed-body{flex:1;min-width:0;}
+  .feed-title{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .feed-sub{font-size:11px;color:var(--sub);}
+  .feed-amt{font-size:13px;font-weight:700;flex:0 0 auto;}
+  .feed-amt.neg{color:var(--red);}
+  .feed-amt.pos{color:var(--green);}
+  .feed-badge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:5px;text-transform:uppercase;letter-spacing:.02em;flex:0 0 auto;}
+  .feed-badge.sisies{background:#f1e2cd;color:#6b5440;}
+  .feed-badge.spaceco{background:#e4dccf;color:#3a2c1e;}
+  :root[data-theme="dark"] .feed-badge.sisies{background:#473a2b;color:#e8d4b0;}
+  :root[data-theme="dark"] .feed-badge.spaceco{background:#332a20;color:#d8c8ab;}
+
+  .stat-box.clickable{cursor:pointer;transition:border-color .15s;}
+  .stat-box.clickable:hover{border-color:var(--accent);}
+
+  /* ---- Drill-down modal ---- */
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(20,15,10,.5);z-index:70;align-items:center;justify-content:center;padding:16px;}
+  .modal-overlay.open{display:flex;}
+  .modal-box{background:var(--card);border-radius:16px;width:100%;max-width:420px;max-height:80vh;overflow-y:auto;box-shadow:0 16px 40px rgba(0,0,0,.25);}
+  .modal-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--border);font-weight:700;font-size:15px;position:sticky;top:0;background:var(--card);}
+  #drilldown-body{padding:6px 18px 16px;}
+  .dd-empty{color:var(--sub);font-size:13px;padding:20px 0;text-align:center;}
+
+  :root[data-theme="dark"] .skel,
+  :root[data-theme="dark"] .skel-box{background:linear-gradient(90deg,#332a20 25%,#473a2b 37%,#332a20 63%);background-size:400% 100%;}
+  :root[data-theme="dark"] .login-box{box-shadow:0 8px 28px rgba(0,0,0,.4);}
+
+  [dir="rtl"] body{direction:rtl;}
+  [dir="rtl"] .footer-row,[dir="rtl"] .goal-row,[dir="rtl"] .topbar{flex-direction:row-reverse;}
+
+  /* ---- Accessibility ---- */
+  a.biz-card:focus-visible,
+  button:focus-visible,
+  input:focus-visible{outline:3px solid var(--accent);outline-offset:2px;}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="login-box">
+    <div class="lock">🔒</div>
+    <h2 data-en="Tasneem's Businesses" data-ar="أعمال تسنيم">Tasneem's Businesses</h2>
+    <input type="password" id="gate-pass" placeholder="Password" autocomplete="current-password" aria-label="Portal password">
+    <button onclick="tryLogin()" data-en="Enter" data-ar="دخول">Enter</button>
+    <div class="login-err" id="gate-err" data-en="Incorrect password." data-ar="كلمة المرور غير صحيحة.">Incorrect password.</div>
+  </div>
+</div>
+
+<div id="app">
+
+<div class="topbar">
+  <button class="icon-btn" id="lang-toggle" onclick="toggleLang()" aria-label="Switch language">🌐 العربية</button>
+  <button class="icon-btn" id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">🌙 Dark</button>
+</div>
+
+<div class="stale-banner" id="stale-banner"><span>⚠️</span><span class="stale-text">Showing saved data</span></div>
+<div class="record-banner" id="record-banner">🏆 New record day! Best combined revenue ever.</div>
+
+<div class="hero reveal">
+  <div class="hero-greet" id="hero-greet">Good day</div>
+  <div class="hero-name">Tasneem 👋</div>
+  <div class="hero-label" data-en="Net Profit Today (Both Businesses)" data-ar="صافي الربح اليوم (كلا المشروعين)">Net Profit Today (Both Businesses)</div>
+  <div class="hero-skel" id="hero-skel"></div>
+  <div class="hero-val" id="hero-val" style="display:none;"></div>
+  <div class="hero-sub" id="hero-sub"></div>
+  <div class="insight" id="insight"></div>
+</div>
+
+<div class="sub" data-en="Pick a business to open it, or check today's combined numbers below." data-ar="اختاري مشروعًا لفتحه، أو راجعي الأرقام المجمعة لليوم أدناه.">Pick a business to open it, or check today's combined numbers below.</div>
+
+<div class="cards">
+  <a class="biz-card reveal" style="animation-delay:.08s;" href="index.html" aria-label="Open Sisies Receipt Sender">
+    <div class="sheen"></div>
+    <div class="biz-name">🧾 Sisies</div>
+    <div class="biz-tag" data-en="Receipt Sender" data-ar="إرسال الفواتير">Receipt Sender</div>
+    <div class="skel" id="sisies-today-skel"></div>
+    <div class="biz-stat" id="sisies-today" style="display:none;"></div>
+  </a>
+  <a class="biz-card reveal" style="animation-delay:.16s;" href="spaceco/index.html" aria-label="Open Space-Co Workspace Management">
+    <div class="sheen"></div>
+    <div class="biz-name">🏢 Space-Co</div>
+    <div class="biz-tag" data-en="Workspace Management" data-ar="إدارة المساحة">Workspace Management</div>
+    <div class="skel" id="spaceco-today-skel"></div>
+    <div class="biz-stat" id="spaceco-today" style="display:none;"></div>
+  </a>
+</div>
+
+<div class="panel reveal" style="animation-delay:.20s;">
+  <div class="panel-title" data-en="Monthly Goal" data-ar="الهدف الشهري">Monthly Goal</div>
+  <div class="goal-row">
+    <div class="goal-ring-wrap">
+      <svg viewBox="0 0 104 104" width="104" height="104">
+        <circle class="goal-ring-bg" cx="52" cy="52" r="45"></circle>
+        <circle class="goal-ring-fg" id="goal-ring-fg" cx="52" cy="52" r="45"></circle>
+      </svg>
+      <div class="goal-pct" id="goal-pct">0%</div>
+    </div>
+    <div class="goal-info">
+      <div class="gl" data-en="This month so far" data-ar="هذا الشهر حتى الآن">This month so far</div>
+      <div class="gv" id="goal-current">—</div>
+      <div class="gl" style="margin-top:8px;" data-en="Goal" data-ar="الهدف">Goal</div>
+      <div class="gv" id="goal-target">—</div>
+      <button class="goal-edit" onclick="editGoal()" data-en="✎ Edit goal" data-ar="✎ تعديل الهدف">✎ Edit goal</button>
+    </div>
+  </div>
+</div>
+
+<div class="panel reveal" style="animation-delay:.24s;">
+  <div class="panel-title" data-en="Combined — Today" data-ar="الإجمالي — اليوم">Combined — Today</div>
+  <div class="grid-3" id="combined-today">
+    <div class="stat-box clickable" onclick="openDrilldown('sisies')"><div class="stat-label" data-en="Sisies" data-ar="سيسيز">Sisies</div><div class="skel-box" id="c-today-sisies-skel"></div><div class="stat-val" id="c-today-sisies" style="display:none;"></div></div>
+    <div class="stat-box clickable" onclick="openDrilldown('spaceco')"><div class="stat-label" data-en="Space-Co" data-ar="سبيس كو">Space-Co</div><div class="skel-box" id="c-today-spaceco-skel"></div><div class="stat-val" id="c-today-spaceco" style="display:none;"></div></div>
+    <div class="stat-box clickable" onclick="openDrilldown('both')"><div class="stat-label" data-en="Total" data-ar="الإجمالي">Total</div><div class="skel-box" id="c-today-total-skel"></div><div class="stat-val green" id="c-today-total" style="display:none;"></div></div>
+  </div>
+
+  <div class="panel-title" style="margin-top:20px;display:flex;justify-content:space-between;align-items:center;">
+    <span data-en="This Week vs Last Week" data-ar="هذا الأسبوع مقابل الأسبوع الماضي">This Week vs Last Week</span>
+  </div>
+  <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:4px;">
+    <div class="skel-box" id="week-cmp-skel" style="width:160px;"></div>
+    <span id="week-cmp" style="display:none;font-size:18px;font-weight:700;"></span>
+  </div>
+  <div class="hero-sub" id="week-cmp-sub" style="color:var(--sub);margin:0 0 16px;"></div>
+
+  <div class="panel-title" style="margin-top:8px;" data-en="Combined — This Month" data-ar="الإجمالي — هذا الشهر">Combined — This Month</div>
+  <div class="grid-3" id="combined-month">
+    <div class="stat-box"><div class="stat-label" data-en="Sisies" data-ar="سيسيز">Sisies</div><div class="skel-box" id="c-month-sisies-skel"></div><div class="stat-val" id="c-month-sisies" style="display:none;"></div></div>
+    <div class="stat-box"><div class="stat-label" data-en="Space-Co" data-ar="سبيس كو">Space-Co</div><div class="skel-box" id="c-month-spaceco-skel"></div><div class="stat-val" id="c-month-spaceco" style="display:none;"></div></div>
+    <div class="stat-box"><div class="stat-label" data-en="Total" data-ar="الإجمالي">Total</div><div class="skel-box" id="c-month-total-skel"></div><div class="stat-val green" id="c-month-total" style="display:none;"></div></div>
+  </div>
+
+  <div class="err" id="err" style="display:none;"></div>
+  <div class="footer-row">
+    <span class="updated" id="updated"></span>
+    <button class="refresh" onclick="loadAll()" data-en="↻ Refresh" data-ar="↻ تحديث">↻ Refresh</button>
+  </div>
+</div>
+
+<div class="panel reveal" style="animation-delay:.32s;">
+  <div class="panel-title" data-en="Last 7 Days — Combined Revenue" data-ar="آخر ٧ أيام — الإيرادات المجمعة">Last 7 Days — Combined Revenue</div>
+  <div class="chart-wrap">
+    <canvas id="revChart"></canvas>
+    <div class="chart-empty" id="chart-empty" style="display:none;">
+      <span class="ce-icon">📊</span>
+      <span data-en="No revenue recorded yet this week" data-ar="لا توجد إيرادات مسجلة هذا الأسبوع بعد">No revenue recorded yet this week</span>
+    </div>
+  </div>
+</div>
+
+<div class="panel reveal" style="animation-delay:.38s;">
+  <div class="panel-title" data-en="Recent Activity" data-ar="النشاط الأخير">Recent Activity</div>
+  <div id="activity-feed"></div>
+  <div class="chart-empty" id="activity-empty" style="display:none;position:static;padding:14px 0;">
+    <span data-en="Nothing recorded yet today" data-ar="لا يوجد نشاط مسجل اليوم بعد">Nothing recorded yet today</span>
+  </div>
+</div>
+
+<div class="panel reveal" style="animation-delay:.42s;">
+  <div class="panel-title" data-en="Monthly Report" data-ar="التقرير الشهري">Monthly Report</div>
+  <div class="hero-sub" style="color:var(--sub);margin:0 0 12px;" data-en="Download a day-by-day combined summary for this month." data-ar="تحميل ملخص يومي مجمّع لهذا الشهر.">Download a day-by-day combined summary for this month.</div>
+  <button class="refresh" onclick="exportMonthlyReport()" style="width:auto;" data-en="⬇ Download CSV" data-ar="⬇ تحميل CSV">⬇ Download CSV</button>
+</div>
+
+</div>
+
+<canvas id="confetti-canvas"></canvas>
+
+<div class="modal-overlay" id="drilldown-overlay" onclick="if(event.target===this)closeDrilldown()">
+  <div class="modal-box">
+    <div class="modal-head">
+      <span id="drilldown-title">Today's breakdown</span>
+      <button class="icon-btn" onclick="closeDrilldown()" aria-label="Close">✕</button>
+    </div>
+    <div id="drilldown-body"></div>
+  </div>
+</div>
+
+<script>
+// Read-only dashboard. Never writes to either business's data.
+
+const PORTAL_PASSWORD = 'tasneem2026'; // shared password — change anytime by editing this line
+
+// ---- Theme ----
+function applyThemeButtonLabel(){
+  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+  document.getElementById('theme-toggle').textContent = dark ? '☀️ Light' : '🌙 Dark';
+}
+function toggleTheme(){
+  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+  if(dark){ document.documentElement.removeAttribute('data-theme'); localStorage.setItem('portal_theme','light'); }
+  else{ document.documentElement.setAttribute('data-theme','dark'); localStorage.setItem('portal_theme','dark'); }
+  applyThemeButtonLabel();
+}
+applyThemeButtonLabel();
+
+// ---- Language (English / Arabic, with RTL layout flip) ----
+function applyLang(){
+  const lang = localStorage.getItem('portal_lang') || 'en';
+  document.documentElement.lang = lang;
+  document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+  document.querySelectorAll('[data-en]').forEach(el=>{
+    el.textContent = lang === 'ar' ? el.getAttribute('data-ar') : el.getAttribute('data-en');
+  });
+  document.getElementById('lang-toggle').textContent = lang === 'ar' ? '🌐 English' : '🌐 العربية';
+}
+function toggleLang(){
+  const cur = localStorage.getItem('portal_lang') || 'en';
+  localStorage.setItem('portal_lang', cur === 'ar' ? 'en' : 'ar');
+  applyLang();
+  if(sessionStorage.getItem('portal_unlocked') === '1') setGreeting();
+}
+applyLang();
+
+function tryLogin(){
+  const val = document.getElementById('gate-pass').value;
+  if(val === PORTAL_PASSWORD){
+    sessionStorage.setItem('portal_unlocked', '1');
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    setGreeting();
+    loadAll();
+  }else{
+    document.getElementById('gate-err').style.display = 'block';
+  }
+}
+document.getElementById('gate-pass').addEventListener('keydown', e => { if(e.key === 'Enter') tryLogin(); });
+
+if(sessionStorage.getItem('portal_unlocked') === '1'){
+  document.getElementById('gate').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+}
+
+const SISIES_URL = 'https://rmnbrntvrjmollepcrwt.supabase.co';
+const SISIES_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtbmJybnR2cmptb2xsZXBjcnd0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4MjA4NTMsImV4cCI6MjA5ODM5Njg1M30.jlNWEu4NdUZZYPXWd0mio9eVA3U2xCrHrPPJ0iGPaQA';
+
+const SPACECO_URL = 'https://vfevpvfaeiwltixgdmln.supabase.co';
+const SPACECO_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmZXZwdmZhZWl3bHRpeGdkbWxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1Nzk1OTksImV4cCI6MjA5MzE1NTU5OX0.6cdMfW5rfVD_vA7nI-K6OjLKQrnsTJZflT7QXG4uyF4';
+
+// Tracks whether the most recent loadAll() had to fall back to cached data for any source,
+// and the oldest cache timestamp involved — used to show a "showing saved data" banner.
+let _usedStaleData = false;
+let _staleSince = null;
+
+function cacheKey(key){ return `portal_cache_${key.table}_${key.key}`; }
+
+async function fetchKv(baseUrl, key, apiKey, fallback){
+  const ck = cacheKey(key);
+  try{
+    const res = await fetch(`${baseUrl}/rest/v1/${key.table}?key=eq.${encodeURIComponent(key.key)}&select=value`, {
+      headers: { apikey: apiKey, Authorization: 'Bearer ' + apiKey }
+    });
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    const rows = await res.json();
+    const value = (!rows[0] || rows[0].value === null || rows[0].value === undefined) ? fallback : JSON.parse(rows[0].value);
+    try{ localStorage.setItem(ck, JSON.stringify({ value, ts: Date.now() })); }catch(e){}
+    return value;
+  }catch(e){
+    console.warn('fetchKv failed, trying cache', key, e);
+    try{
+      const cached = JSON.parse(localStorage.getItem(ck));
+      if(cached && cached.value !== undefined){
+        _usedStaleData = true;
+        if(_staleSince === null || cached.ts < _staleSince) _staleSince = cached.ts;
+        return cached.value;
+      }
+    }catch(e2){}
+    return fallback;
+  }
+}
+
+// Uses local device date (not UTC) to match how both source apps record "today" — avoids
+// a day-boundary mismatch for the few hours after local midnight when UTC date is still yesterday.
+function toLocalISO(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function todayISO(){ return toLocalISO(new Date()); }
+function monthISO(){ return todayISO().substring(0,7); }
+function isoDaysAgo(n){ const d = new Date(); d.setDate(d.getDate() - n); return toLocalISO(d); }
+
+// Sisies stores dates as DD/MM/YYYY (en-GB). Convert to YYYY-MM-DD for comparison.
+function sisiesDateToISO(d){
+  if(!d) return '';
+  const p = d.split('/');
+  if(p.length !== 3) return '';
+  return `${p[2]}-${p[1].padStart(2,'0')}-${p[0].padStart(2,'0')}`;
+}
+
+function fmt(n){ return Math.round(n).toLocaleString() + ' LE'; }
+
+function showVal(skelId, valId, html){
+  document.getElementById(skelId).style.display = 'none';
+  const el = document.getElementById(valId);
+  el.style.display = '';
+  el.innerHTML = html;
+}
+
+function setGreeting(){
+  const h = new Date().getHours();
+  const lang = localStorage.getItem('portal_lang') || 'en';
+  if(lang === 'ar'){
+    const text = h < 12 ? 'صباح الخير' : h < 18 ? 'مساء الخير' : 'مساء الخير';
+    document.getElementById('hero-greet').textContent = text + '، إليكِ نظرة على الأعمال';
+  }else{
+    const text = h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
+    document.getElementById('hero-greet').textContent = text + ', here\'s how things look';
+  }
+}
+
+// Animates a number counting up from its current displayed value to `target`.
+function countUp(el, target, duration = 900){
+  const start = 0;
+  const startTime = performance.now();
+  function tick(now){
+    const p = Math.min((now - startTime) / duration, 1);
+    const eased = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.round(start + (target - start) * eased).toLocaleString();
+    if(p < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+function renderHero(totalToday, totalYesterday){
+  document.getElementById('hero-skel').style.display = 'none';
+  const valEl = document.getElementById('hero-val');
+  valEl.style.display = 'flex';
+  valEl.innerHTML = '<span id="hero-num">0</span><span class="unit">LE</span>';
+  countUp(document.getElementById('hero-num'), Math.round(totalToday));
+
+  const subEl = document.getElementById('hero-sub');
+  if(totalYesterday > 0){
+    const pct = ((totalToday - totalYesterday) / totalYesterday) * 100;
+    const dir = pct > 1 ? 'up' : pct < -1 ? 'down' : 'flat';
+    const arrow = dir === 'up' ? '▲' : dir === 'down' ? '▼' : '–';
+    valEl.insertAdjacentHTML('beforeend', `<span class="trend ${dir}">${arrow} ${Math.abs(pct).toFixed(0)}%</span>`);
+    subEl.textContent = `vs ${fmt(totalYesterday)} yesterday`;
+  }else{
+    subEl.textContent = 'No data for yesterday yet';
+  }
+}
+
+let revChart = null;
+function renderChart(labels, sisiesData, spacecoData){
+  const ctx = document.getElementById('revChart');
+  const emptyEl = document.getElementById('chart-empty');
+  const allZero = sisiesData.every(v=>v===0) && spacecoData.every(v=>v===0);
+  if(allZero){
+    ctx.style.display = 'none';
+    emptyEl.style.display = 'flex';
+    if(revChart){ revChart.destroy(); revChart = null; }
+    return;
+  }
+  ctx.style.display = '';
+  emptyEl.style.display = 'none';
+  if(window._chartLoadFailed || typeof Chart === 'undefined') return;
+  if(revChart) revChart.destroy();
+  revChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        { label: 'Sisies', data: sisiesData, backgroundColor: '#c79a6b', borderRadius: 4 },
+        { label: 'Space-Co', data: spacecoData, backgroundColor: '#5a4632', borderRadius: 4 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, grid: { color: '#eee2d4' } } },
+      plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } } }
+    }
+  });
+}
+
+// ---- Confetti (canvas particle burst) ----
+function fireConfetti(){
+  const canvas = document.getElementById('confetti-canvas');
+  canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+  const ctx = canvas.getContext('2d');
+  const colors = ['#ffb347','#ffd76a','#5a4632','#7be3ad','#ff9a8e'];
+  const particles = Array.from({length:140}, () => ({
+    x: Math.random() * canvas.width, y: -20 - Math.random()*canvas.height*0.3,
+    vx: (Math.random()-0.5)*4, vy: 2 + Math.random()*3.5,
+    size: 4 + Math.random()*5, color: colors[Math.floor(Math.random()*colors.length)],
+    rot: Math.random()*360, vr: (Math.random()-0.5)*10
+  }));
+  let frame = 0;
+  function tick(){
+    frame++;
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    particles.forEach(p=>{
+      p.x += p.vx; p.y += p.vy; p.vy += 0.04; p.rot += p.vr;
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot*Math.PI/180);
+      ctx.fillStyle = p.color; ctx.fillRect(-p.size/2,-p.size/2,p.size,p.size*0.6);
+      ctx.restore();
+    });
+    if(frame < 220) requestAnimationFrame(tick);
+    else ctx.clearRect(0,0,canvas.width,canvas.height);
+  }
+  tick();
+}
+
+// ---- Record-day detection ----
+function checkRecordDay(totalToday){
+  const prevBest = parseFloat(localStorage.getItem('portal_best_day') || '0');
+  const banner = document.getElementById('record-banner');
+  if(totalToday > 0 && totalToday > prevBest){
+    localStorage.setItem('portal_best_day', String(totalToday));
+    if(prevBest > 0){
+      banner.style.display = 'flex';
+      fireConfetti();
+    }
+  }
+}
+
+// ---- Smart insight line ----
+function renderInsight(sToday, spToday, sWeekAvgPrev, spWeekAvgPrev){
+  const el = document.getElementById('insight');
+  const lines = [];
+  if(sWeekAvgPrev > 0){
+    const d = ((sToday - sWeekAvgPrev) / sWeekAvgPrev) * 100;
+    if(Math.abs(d) > 15) lines.push(`Sisies is ${d>0?'up':'down'} ${Math.abs(d).toFixed(0)}% vs its recent daily average.`);
+  }
+  if(spWeekAvgPrev > 0){
+    const d = ((spToday - spWeekAvgPrev) / spWeekAvgPrev) * 100;
+    if(Math.abs(d) > 15) lines.push(`Space-Co is ${d>0?'up':'down'} ${Math.abs(d).toFixed(0)}% vs its recent daily average.`);
+  }
+  if(sToday > spToday * 1.5) lines.push('Sisies is outpacing Space-Co today.');
+  else if(spToday > sToday * 1.5) lines.push('Space-Co is outpacing Sisies today.');
+  if(lines.length === 0) lines.push('Both businesses are tracking close to their usual pace today.');
+  el.style.display = 'block';
+  el.innerHTML = '<span class="ic">💡</span>' + lines[0];
+}
+
+// ---- Monthly goal ring ----
+const GOAL_KEY = 'portal_monthly_goal';
+function getGoal(){ return parseFloat(localStorage.getItem(GOAL_KEY) || '100000'); }
+function editGoal(){
+  const current = getGoal();
+  const val = prompt('Set the combined monthly revenue goal (LE):', current);
+  if(val !== null && !isNaN(parseFloat(val)) && parseFloat(val) > 0){
+    localStorage.setItem(GOAL_KEY, String(parseFloat(val)));
+    renderGoalRing(window._lastSMonth + window._lastSpMonth);
+  }
+}
+function renderGoalRing(currentTotal){
+  const goal = getGoal();
+  const pct = Math.max(0, Math.min(100, (currentTotal / goal) * 100));
+  const circumference = 283;
+  const offset = circumference - (pct/100) * circumference;
+  document.getElementById('goal-ring-fg').style.strokeDashoffset = offset;
+  document.getElementById('goal-current').textContent = fmt(currentTotal);
+  document.getElementById('goal-target').textContent = fmt(goal);
+  countUp(document.getElementById('goal-pct'), Math.round(pct), 1100);
+  document.getElementById('goal-pct').dataset.suffix = '%';
+  const pctEl = document.getElementById('goal-pct');
+  const origTick = pctEl.textContent;
+  // append % after count-up settles
+  setTimeout(()=>{ pctEl.textContent = Math.round(pct) + '%'; }, 1150);
+}
+
+// ---- 3D tilt on business cards ----
+document.querySelectorAll('.biz-card').forEach(card=>{
+  card.addEventListener('mousemove', e=>{
+    const r = card.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width;
+    const y = (e.clientY - r.top) / r.height;
+    const rotX = (0.5 - y) * 10;
+    const rotY = (x - 0.5) * 10;
+    card.style.transform = `perspective(600px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale(1.02)`;
+    const sheen = card.querySelector('.sheen');
+    sheen.style.opacity = '1';
+    sheen.style.backgroundPosition = `${x*100}% ${y*100}%`;
+  });
+  card.addEventListener('mouseleave', ()=>{
+    card.style.transform = '';
+    card.querySelector('.sheen').style.opacity = '0';
+  });
+});
+
+// ---- Merged activity feed ----
+function renderActivityFeed(orders, clients, drinkOrders, expenses){
+  const today = todayISO();
+  const events = [];
+
+  orders.filter(o => sisiesDateToISO(o.date) === today).forEach(o=>{
+    events.push({
+      ts: o.createdAt || (today + 'T12:00:00'),
+      biz: 'sisies', icon: '🧾',
+      title: o.customerName || 'Order',
+      sub: (o.items ? o.items.length : 0) + ' item(s)',
+      amount: o.total || 0, sign: 'pos'
+    });
+  });
+  clients.filter(c => c.date === today).forEach(c=>{
+    events.push({
+      ts: today + 'T' + (c.timeOut || c.timeIn || '12:00'),
+      biz: 'spaceco', icon: '🏢',
+      title: c.name || 'Guest checkout',
+      sub: c.room ? ('Room: ' + c.room) : 'Check-in',
+      amount: c.cost || 0, sign: 'pos'
+    });
+  });
+  drinkOrders.filter(o => o.date === today).forEach(o=>{
+    events.push({
+      ts: today + 'T12:00:00',
+      biz: 'spaceco', icon: '☕',
+      title: o.client || 'Drinks order',
+      sub: (o.items ? o.items.length : 0) + ' item(s)',
+      amount: o.total || 0, sign: 'pos'
+    });
+  });
+  expenses.filter(e => e.date === today).forEach(e=>{
+    events.push({
+      ts: today + 'T12:00:00',
+      biz: 'spaceco', icon: '💸',
+      title: e.desc || 'Expense',
+      sub: e.category || 'Expense',
+      amount: e.amount || 0, sign: 'neg'
+    });
+  });
+
+  events.sort((a,b) => b.ts.localeCompare(a.ts));
+  const top = events.slice(0, 8);
+
+  const feedEl = document.getElementById('activity-feed');
+  const emptyEl = document.getElementById('activity-empty');
+  if(top.length === 0){
+    feedEl.innerHTML = '';
+    emptyEl.style.display = 'flex';
+    return;
+  }
+  emptyEl.style.display = 'none';
+  feedEl.innerHTML = top.map(ev => `
+    <div class="feed-item">
+      <div class="feed-icon">${ev.icon}</div>
+      <div class="feed-body">
+        <div class="feed-title">${ev.title}</div>
+        <div class="feed-sub">${ev.sub}</div>
+      </div>
+      <span class="feed-badge ${ev.biz}">${ev.biz === 'sisies' ? 'Sisies' : 'Space-Co'}</span>
+      <div class="feed-amt ${ev.sign === 'neg' ? 'neg' : 'pos'}">${ev.sign === 'neg' ? '-' : '+'}${fmt(ev.amount)}</div>
+    </div>
+  `).join('');
+}
+
+// ---- Monthly CSV export ----
+function exportMonthlyReport(){
+  const rd = window._reportData;
+  if(!rd){ alert('Data is still loading — try again in a moment.'); return; }
+  const { sisiesRevenueOn, spacecoRevenueOn, expensesOn, month } = rd;
+  const [y, m] = month.split('-').map(Number);
+  const daysInMonth = new Date(y, m, 0).getDate();
+  const todayD = new Date();
+  const isCurrentMonth = todayISO().startsWith(month);
+  const lastDay = isCurrentMonth ? todayD.getDate() : daysInMonth;
+
+  let rows = [['Date','Sisies Revenue (LE)','Space-Co Net Revenue (LE)','Space-Co Expenses (LE)','Combined Total (LE)']];
+  let totS = 0, totSp = 0, totExp = 0;
+  for(let d = 1; d <= lastDay; d++){
+    const dateStr = `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const s = sisiesRevenueOn(dateStr);
+    const sp = spacecoRevenueOn(dateStr);
+    const exp = expensesOn(dateStr);
+    totS += s; totSp += sp; totExp += exp;
+    rows.push([dateStr, s.toFixed(0), sp.toFixed(0), exp.toFixed(0), (s+sp).toFixed(0)]);
+  }
+  rows.push(['TOTAL', totS.toFixed(0), totSp.toFixed(0), totExp.toFixed(0), (totS+totSp).toFixed(0)]);
+
+  const csv = rows.map(r => r.join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `combined-report-${month}.csv`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// ---- Drill-down modal ----
+function openDrilldown(which){
+  const data = window._todayData;
+  if(!data) return;
+  const titleEl = document.getElementById('drilldown-title');
+  const bodyEl = document.getElementById('drilldown-body');
+  const lang = localStorage.getItem('portal_lang') || 'en';
+
+  const titles = { sisies: lang==='ar'?'تفاصيل سيسيز اليوم':"Sisies — Today's breakdown",
+    spaceco: lang==='ar'?'تفاصيل سبيس كو اليوم':"Space-Co — Today's breakdown",
+    both: lang==='ar'?'تفاصيل اليوم الكاملة':"Today's full breakdown" };
+  titleEl.textContent = titles[which];
+
+  let rows = [];
+  if(which === 'sisies' || which === 'both'){
+    data.orders.forEach(o => rows.push({ icon:'🧾', title:o.customerName||'Order', sub:(o.items?o.items.length:0)+' item(s)', amount:o.total||0, biz:'sisies' }));
+  }
+  if(which === 'spaceco' || which === 'both'){
+    data.clients.forEach(c => rows.push({ icon:'🏢', title:c.name||'Guest', sub:c.room?('Room: '+c.room):'Check-in', amount:c.cost||0, biz:'spaceco' }));
+    data.drinkOrders.forEach(o => rows.push({ icon:'☕', title:o.client||'Drinks order', sub:(o.items?o.items.length:0)+' item(s)', amount:o.total||0, biz:'spaceco' }));
+    data.shiftPayments.forEach(s => { if(s.academyPayments>0) rows.push({ icon:'🎓', title:s.note||'Academy payment', sub:s.cashier||'', amount:s.academyPayments, biz:'spaceco' }); });
+  }
+
+  if(rows.length === 0){
+    bodyEl.innerHTML = `<div class="dd-empty">${lang==='ar'?'لا يوجد نشاط مسجل اليوم':'Nothing recorded yet today'}</div>`;
+  }else{
+    bodyEl.innerHTML = rows.map(r => `
+      <div class="feed-item">
+        <div class="feed-icon">${r.icon}</div>
+        <div class="feed-body"><div class="feed-title">${r.title}</div><div class="feed-sub">${r.sub}</div></div>
+        <span class="feed-badge ${r.biz}">${r.biz === 'sisies' ? 'Sisies' : 'Space-Co'}</span>
+        <div class="feed-amt pos">${fmt(r.amount)}</div>
+      </div>
+    `).join('');
+  }
+  document.getElementById('drilldown-overlay').classList.add('open');
+}
+function closeDrilldown(){ document.getElementById('drilldown-overlay').classList.remove('open'); }
+
+function renderWeekComparison(thisWeek, lastWeek){
+  document.getElementById('week-cmp-skel').style.display = 'none';
+  const el = document.getElementById('week-cmp');
+  el.style.display = '';
+  let html = fmt(thisWeek);
+  if(lastWeek > 0){
+    const pct = ((thisWeek - lastWeek) / lastWeek) * 100;
+    const dir = pct > 1 ? 'up' : pct < -1 ? 'down' : 'flat';
+    const arrow = dir === 'up' ? '▲' : dir === 'down' ? '▼' : '–';
+    html += ` <span class="trend ${dir}" style="background:${dir==='up'?'rgba(31,143,78,.12)':dir==='down'?'rgba(192,57,43,.12)':'rgba(122,107,88,.12)'};color:${dir==='up'?'var(--green)':dir==='down'?'var(--red)':'var(--sub)'};">${arrow} ${Math.abs(pct).toFixed(0)}%</span>`;
+  }
+  el.innerHTML = html;
+  document.getElementById('week-cmp-sub').textContent = `Last 7 days: ${fmt(thisWeek)} · Previous 7 days: ${fmt(lastWeek)}`;
+}
+
+async function loadAll(){
+  document.getElementById('err').style.display = 'none';
+  document.getElementById('stale-banner').style.display = 'none';
+  _usedStaleData = false; _staleSince = null;
+  const today = todayISO();
+  const month = monthISO();
+
+  try{
+    const [orders, clients, drinkOrders, shiftPayments, expenses] = await Promise.all([
+      fetchKv(SISIES_URL, {table:'sisies_kv', key:'sisies_orders'}, SISIES_KEY, []),
+      fetchKv(SPACECO_URL, {table:'spaceco_kv', key:'clients'}, SPACECO_KEY, []),
+      fetchKv(SPACECO_URL, {table:'spaceco_kv', key:'drinkOrders'}, SPACECO_KEY, []),
+      fetchKv(SPACECO_URL, {table:'spaceco_kv', key:'shiftPayments'}, SPACECO_KEY, []),
+      fetchKv(SPACECO_URL, {table:'spaceco_kv', key:'expenses'}, SPACECO_KEY, [])
+    ]);
+
+    const sisiesRevenueOn = d => orders.filter(o => sisiesDateToISO(o.date) === d).reduce((s,o)=>s+(o.total||0),0);
+    const spacecoGrossOn = d =>
+      clients.filter(c=>c.date===d).reduce((s,c)=>s+(c.cost||0),0) +
+      drinkOrders.filter(o=>o.date===d).reduce((s,o)=>s+(o.total||0),0) +
+      shiftPayments.filter(s=>s.date===d && s.academyPayments>0).reduce((s,x)=>s+(x.academyPayments||0),0);
+    const expensesOn = d => expenses.filter(e=>e.date===d).reduce((s,e)=>s+(e.amount||0),0);
+    // Net revenue = gross revenue minus expenses for that business
+    const spacecoRevenueOn = d => spacecoGrossOn(d) - expensesOn(d);
+
+    const sToday = sisiesRevenueOn(today);
+    const spToday = spacecoRevenueOn(today);
+    const yesterday = isoDaysAgo(1);
+    const totalYesterday = sisiesRevenueOn(yesterday) + spacecoRevenueOn(yesterday);
+
+    const sMonth = orders.filter(o => sisiesDateToISO(o.date).startsWith(month)).reduce((s,o)=>s+(o.total||0),0);
+    const spGrossMonth =
+      clients.filter(c=>(c.date||'').startsWith(month)).reduce((s,c)=>s+(c.cost||0),0) +
+      drinkOrders.filter(o=>(o.date||'').startsWith(month)).reduce((s,o)=>s+(o.total||0),0) +
+      shiftPayments.filter(s=>(s.date||'').startsWith(month) && s.academyPayments>0).reduce((s,x)=>s+(x.academyPayments||0),0);
+    const expMonth = expenses.filter(e=>(e.date||'').startsWith(month)).reduce((s,e)=>s+(e.amount||0),0);
+    const spMonth = spGrossMonth - expMonth;
+
+    renderHero(sToday + spToday, totalYesterday);
+
+    showVal('sisies-today-skel', 'sisies-today', fmt(sToday) + ' <span class="unit">today</span>');
+    showVal('spaceco-today-skel', 'spaceco-today', fmt(spToday) + ' <span class="unit">today</span>');
+
+    showVal('c-today-sisies-skel', 'c-today-sisies', fmt(sToday));
+    showVal('c-today-spaceco-skel', 'c-today-spaceco', fmt(spToday));
+    showVal('c-today-total-skel', 'c-today-total', fmt(sToday + spToday));
+
+    showVal('c-month-sisies-skel', 'c-month-sisies', fmt(sMonth));
+    showVal('c-month-spaceco-skel', 'c-month-spaceco', fmt(spMonth));
+    showVal('c-month-total-skel', 'c-month-total', fmt(sMonth + spMonth));
+
+    const days = [...Array(7)].map((_,i)=>isoDaysAgo(6-i));
+    const labels = days.map(d => d.slice(5).split('-').reverse().join('/'));
+    renderChart(labels, days.map(sisiesRevenueOn), days.map(spacecoRevenueOn));
+
+    // Previous 6 days (excluding today) used as a baseline for the insight line
+    const prevDays = [...Array(6)].map((_,i)=>isoDaysAgo(6-i));
+    const sWeekAvgPrev = prevDays.reduce((s,d)=>s+sisiesRevenueOn(d),0) / prevDays.length;
+    const spWeekAvgPrev = prevDays.reduce((s,d)=>s+spacecoRevenueOn(d),0) / prevDays.length;
+    renderInsight(sToday, spToday, sWeekAvgPrev, spWeekAvgPrev);
+
+    checkRecordDay(sToday + spToday);
+    renderActivityFeed(orders, clients, drinkOrders, expenses);
+
+    window._todayData = {
+      orders: orders.filter(o => sisiesDateToISO(o.date) === today),
+      clients: clients.filter(c => c.date === today),
+      drinkOrders: drinkOrders.filter(o => o.date === today),
+      shiftPayments: shiftPayments.filter(s => s.date === today)
+    };
+
+    // Cache raw data + revenue functions for the monthly CSV export
+    window._reportData = { sisiesRevenueOn, spacecoRevenueOn, expensesOn, month };
+
+    const thisWeekDays = [...Array(7)].map((_,i)=>isoDaysAgo(i));
+    const lastWeekDays = [...Array(7)].map((_,i)=>isoDaysAgo(i+7));
+    const thisWeekTotal = thisWeekDays.reduce((s,d)=>s+sisiesRevenueOn(d)+spacecoRevenueOn(d),0);
+    const lastWeekTotal = lastWeekDays.reduce((s,d)=>s+sisiesRevenueOn(d)+spacecoRevenueOn(d),0);
+    renderWeekComparison(thisWeekTotal, lastWeekTotal);
+
+    window._lastSMonth = sMonth; window._lastSpMonth = spMonth;
+    renderGoalRing(sMonth + spMonth);
+
+    if(_usedStaleData){
+      const banner = document.getElementById('stale-banner');
+      banner.style.display = 'flex';
+      banner.querySelector('.stale-text').textContent =
+        'Connection issue — showing saved data from ' + new Date(_staleSince).toLocaleString();
+    }
+    document.getElementById('updated').textContent = 'Updated ' + new Date().toLocaleTimeString();
+  }catch(e){
+    console.error(e);
+    const errEl = document.getElementById('err');
+    errEl.style.display = 'block';
+    errEl.textContent = 'Could not load combined numbers right now: ' + e.message;
+  }
+}
+
+if(sessionStorage.getItem('portal_unlocked') === '1'){ setGreeting(); loadAll(); }
+
+// Auto-refresh every 3 minutes while the tab is open and unlocked
+setInterval(() => {
+  if(sessionStorage.getItem('portal_unlocked') === '1') loadAll();
+}, 3 * 60 * 1000);
+</script>
+</body>
+</html>
