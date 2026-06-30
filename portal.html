@@ -367,6 +367,29 @@ const SISIES_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSI
 const SPACECO_URL = 'https://vfevpvfaeiwltixgdmln.supabase.co';
 const SPACECO_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmZXZwdmZhZWl3bHRpeGdkbWxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1Nzk1OTksImV4cCI6MjA5MzE1NTU5OX0.6cdMfW5rfVD_vA7nI-K6OjLKQrnsTJZflT7QXG4uyF4';
 
+// Portal's own data (monthly goal, best-day record) — separate Supabase project,
+// shared across every device that opens the portal (not just localStorage).
+const PORTAL_URL = 'https://lefusewopltdkzblmqzw.supabase.co';
+const PORTAL_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxlZnVzZXdvcGx0ZGt6YmxtcXp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4MzQxMzgsImV4cCI6MjA5ODQxMDEzOH0.x5ncgc491c7Mmpk5R9xyeFnYJAKJo2j9b1ydijlZYLk';
+
+async function setPortalKv(key, value){
+  try{ localStorage.setItem('portal_kv_' + key, JSON.stringify(value)); }catch(e){}
+  try{
+    await fetch(`${PORTAL_URL}/rest/v1/portal_kv?key=eq.${encodeURIComponent(key)}`, {
+      method: 'DELETE',
+      headers: { apikey: PORTAL_KEY, Authorization: 'Bearer ' + PORTAL_KEY }
+    });
+    await fetch(`${PORTAL_URL}/rest/v1/portal_kv`, {
+      method: 'POST',
+      headers: { apikey: PORTAL_KEY, Authorization: 'Bearer ' + PORTAL_KEY, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+      body: JSON.stringify({ key, value: JSON.stringify(value) })
+    });
+  }catch(e){ console.warn('setPortalKv failed', key, e); }
+}
+async function getPortalKv(key, fallback){
+  return fetchKv(PORTAL_URL, {table:'portal_kv', key}, PORTAL_KEY, fallback);
+}
+
 // Tracks whether the most recent loadAll() had to fall back to cached data for any source,
 // and the oldest cache timestamp involved — used to show a "showing saved data" banner.
 let _usedStaleData = false;
@@ -527,12 +550,12 @@ function fireConfetti(){
   tick();
 }
 
-// ---- Record-day detection ----
-function checkRecordDay(totalToday){
-  const prevBest = parseFloat(localStorage.getItem('portal_best_day') || '0');
+// ---- Record-day detection (synced via Supabase so it's consistent across devices) ----
+async function checkRecordDay(totalToday){
+  const prevBest = parseFloat(await getPortalKv('best_day', 0)) || 0;
   const banner = document.getElementById('record-banner');
   if(totalToday > 0 && totalToday > prevBest){
-    localStorage.setItem('portal_best_day', String(totalToday));
+    await setPortalKv('best_day', totalToday);
     if(prevBest > 0){
       banner.style.display = 'flex';
       fireConfetti();
@@ -559,19 +582,18 @@ function renderInsight(sToday, spToday, sWeekAvgPrev, spWeekAvgPrev){
   el.innerHTML = '<span class="ic">💡</span>' + lines[0];
 }
 
-// ---- Monthly goal ring ----
-const GOAL_KEY = 'portal_monthly_goal';
-function getGoal(){ return parseFloat(localStorage.getItem(GOAL_KEY) || '100000'); }
-function editGoal(){
-  const current = getGoal();
+// ---- Monthly goal ring (synced via Supabase) ----
+async function getGoal(){ return parseFloat(await getPortalKv('monthly_goal', 100000)) || 100000; }
+async function editGoal(){
+  const current = await getGoal();
   const val = prompt('Set the combined monthly revenue goal (LE):', current);
   if(val !== null && !isNaN(parseFloat(val)) && parseFloat(val) > 0){
-    localStorage.setItem(GOAL_KEY, String(parseFloat(val)));
+    await setPortalKv('monthly_goal', parseFloat(val));
     renderGoalRing(window._lastSMonth + window._lastSpMonth);
   }
 }
-function renderGoalRing(currentTotal){
-  const goal = getGoal();
+async function renderGoalRing(currentTotal){
+  const goal = await getGoal();
   const pct = Math.max(0, Math.min(100, (currentTotal / goal) * 100));
   const circumference = 283;
   const offset = circumference - (pct/100) * circumference;
@@ -819,7 +841,7 @@ async function loadAll(){
     const spWeekAvgPrev = prevDays.reduce((s,d)=>s+spacecoRevenueOn(d),0) / prevDays.length;
     renderInsight(sToday, spToday, sWeekAvgPrev, spWeekAvgPrev);
 
-    checkRecordDay(sToday + spToday);
+    await checkRecordDay(sToday + spToday);
     renderActivityFeed(orders, clients, drinkOrders, expenses);
 
     window._todayData = {
