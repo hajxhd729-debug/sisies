@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Sisies — Receipt Sender</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Sisies">
+<meta name="theme-color" content="#5a4632">
+<style>
+  :root{
+    --brown-dark:#5a4632;
+    --brown:#8a6d4f;
+    --brown-light:#b89a78;
+    --cream:#faf7f2;
+    --line:#e5ddd0;
+    --danger:#c0524b;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    background:var(--cream);
+    color:var(--brown-dark);
+    padding-bottom:100px;
+  }
+  header{
+    text-align:center;
+    padding:24px 16px 12px;
+    border-bottom:1px solid var(--line);
+    background:#fff;
+  }
+  header h1{
+    margin:0;
+    font-family:Georgia,"Times New Roman",serif;
+    letter-spacing:4px;
+    font-size:28px;
+    color:var(--brown-dark);
+  }
+  header p{
+    margin:4px 0 0;
+    font-size:11px;
+    letter-spacing:2px;
+    color:var(--brown-light);
+  }
+  #sync-status{
+    font-size:10px;
+    color:#3a9b5c;
+    margin-top:6px;
+  }
+  nav.tabs{
+    display:flex;
+    max-width:520px;
+    margin:0 auto;
+    border-bottom:1px solid var(--line);
+    background:#fff;
+  }
+  nav.tabs button{
+    flex:1;
+    padding:12px 6px;
+    background:none;
+    border:none;
+    font-size:13px;
+    font-weight:600;
+    color:var(--brown-light);
+    border-bottom:2px solid transparent;
+    cursor:pointer;
+  }
+  nav.tabs button.active{
+    color:var(--brown-dark);
+    border-bottom-color:var(--brown);
+  }
+  main{
+    max-width:520px;
+    margin:0 auto;
+    padding:16px;
+  }
+  .tab-panel{display:none;}
+  .tab-panel.active{display:block;}
+  .card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:16px;
+    margin-bottom:14px;
+  }
+  .card h2{
+    font-size:13px;
+    text-transform:uppercase;
+    letter-spacing:1.5px;
+    color:var(--brown);
+    margin:0 0 12px;
+  }
+  label{
+    display:block;
+    font-size:13px;
+    color:var(--brown-dark);
+    margin-bottom:5px;
+    font-weight:600;
+  }
+  input[type=text], input[type=tel], input[type=number], textarea, select{
+    width:100%;
+    padding:11px 12px;
+    border:1px solid var(--line);
+    border-radius:10px;
+    font-size:15px;
+    background:var(--cream);
+    color:var(--brown-dark);
+    margin-bottom:12px;
+    -webkit-appearance:none;
+  }
+  input:focus, textarea:focus, select:focus{
+    outline:none;
+    border-color:var(--brown-light);
+    background:#fff;
+  }
+  .item-row{
+    display:grid;
+    grid-template-columns:1fr 50px 64px 28px;
+    gap:6px;
+    align-items:center;
+    margin-bottom:8px;
+  }
+  .item-row input, .item-row select{margin-bottom:0;}
+  .remove-btn{
+    background:none;
+    border:none;
+    color:var(--danger);
+    font-size:20px;
+    cursor:pointer;
+    padding:0;
+    line-height:1;
+  }
+  .add-item-btn, .secondary-btn{
+    width:100%;
+    padding:10px;
+    background:var(--cream);
+    border:1px dashed var(--brown-light);
+    border-radius:10px;
+    color:var(--brown);
+    font-size:14px;
+    font-weight:600;
+    cursor:pointer;
+    margin-top:4px;
+  }
+  .row2{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+  .row3{
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:10px;
+  }
+  .totals{
+    border-top:1px dashed var(--line);
+    padding-top:10px;
+    margin-top:4px;
+    font-size:14px;
+  }
+  .totals .line{
+    display:flex;
+    justify-content:space-between;
+    padding:4px 0;
+  }
+  .totals .grand{
+    font-weight:700;
+    font-size:18px;
+    color:var(--brown-dark);
+    border-top:1px solid var(--line);
+    margin-top:6px;
+    padding-top:10px;
+  }
+  .col-head{
+    display:grid;
+    grid-template-columns:1fr 50px 64px 28px;
+    gap:6px;
+    font-size:11px;
+    color:var(--brown-light);
+    margin-bottom:6px;
+    text-transform:uppercase;
+    letter-spacing:.5px;
+  }
+  .preview-box{
+    white-space:pre-wrap;
+    background:var(--cream);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:12px;
+    font-size:13px;
+    line-height:1.6;
+    color:var(--brown-dark);
+    max-height:260px;
+    overflow-y:auto;
+  }
+  footer{
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    background:#fff;
+    border-top:1px solid var(--line);
+    padding:10px 16px calc(10px + env(safe-area-inset-bottom));
+    display:flex;
+    gap:8px;
+    max-width:520px;
+    margin:0 auto;
+  }
+  .btn{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    border:none;
+    border-radius:12px;
+    padding:14px 8px;
+    font-size:14px;
+    font-weight:700;
+    cursor:pointer;
+  }
+  .send-btn{background:#25D366;color:#fff;}
+  .print-btn{background:var(--brown-dark);color:#fff;}
+  .btn:disabled{background:#ddd;color:#999;cursor:not-allowed;}
+  .hint{
+    font-size:11px;
+    color:var(--brown-light);
+    margin-top:-6px;
+    margin-bottom:10px;
+  }
+  .product-list-row{
+    display:grid;
+    grid-template-columns:1fr 70px 32px;
+    gap:6px;
+    align-items:center;
+    margin-bottom:8px;
+  }
+  .product-list-row input{margin-bottom:0;}
+  .order-hist-item{
+    border-bottom:1px solid var(--line);
+    padding:10px 0;
+    font-size:13px;
+  }
+  .order-hist-item .oh-top{
+    display:flex;
+    justify-content:space-between;
+    font-weight:700;
+    color:var(--brown-dark);
+  }
+  .order-hist-item .oh-sub{
+    color:var(--brown-light);
+    font-size:12px;
+  }
+  #boot-overlay{
+    position:fixed;inset:0;z-index:99999;background:var(--cream);
+    display:flex;align-items:center;justify-content:center;flex-direction:column;gap:18px;
+  }
+  #boot-overlay .dot{width:10px;height:10px;border-radius:50%;background:var(--brown);animation:sbpulse 1.2s ease-in-out infinite;}
+  @keyframes sbpulse{0%,80%,100%{opacity:.25}40%{opacity:1}}
+
+  @media print{
+    body *{visibility:hidden;}
+    #printArea, #printArea *{visibility:visible;}
+    #printArea{
+      position:absolute;top:0;left:0;width:100%;
+      padding:10px;
+      font-family:Georgia,serif;
+    }
+    header, nav, footer, .card h2{display:none;}
+  }
+  #printArea{display:none;}
+</style>
+</head>
+<body>
+
+<div id="boot-overlay">
+  <div style="font-family:Georgia,serif;font-size:22px;letter-spacing:3px;color:#5a4632;">SISIES</div>
+  <div style="display:flex;gap:8px;">
+    <div class="dot"></div><div class="dot" style="animation-delay:.2s;"></div><div class="dot" style="animation-delay:.4s;"></div>
+  </div>
+  <div style="font-size:12px;color:#b89a78;">Loading…</div>
+</div>
+
+<header>
+  <h1>SISIES</h1>
+  <p>RECEIPT SENDER</p>
+  <div id="sync-status">☁ Cloud Sync Active</div>
+</header>
+
+<nav class="tabs">
+  <button class="tab-btn active" data-tab="new">New Receipt</button>
+  <button class="tab-btn" data-tab="products">Products</button>
+  <button class="tab-btn" data-tab="history">History</button>
+</nav>
+
+<main>
+
+  <!-- NEW RECEIPT TAB -->
+  <div class="tab-panel active" id="tab-new">
+
+    <div class="card">
+      <h2>Customer</h2>
+      <label for="custName">Customer name</label>
+      <input type="text" id="custName" placeholder="e.g. Mariam Ahmed">
+      <label for="custPhone">WhatsApp number (with country code)</label>
+      <input type="tel" id="custPhone" placeholder="e.g. 201001234567">
+      <div class="hint">No "+" or spaces. Example Egypt number: 201001234567</div>
+    </div>
+
+    <div class="card">
+      <h2>Items</h2>
+      <div class="row2">
+        <div>
+          <label for="quickAdd">Add from product list</label>
+          <select id="quickAdd">
+            <option value="">Select product…</option>
+          </select>
+        </div>
+        <div>
+          <label>&nbsp;</label>
+          <button type="button" class="secondary-btn" id="quickAddBtn" style="margin-top:0;">+ Add Selected</button>
+        </div>
+      </div>
+      <div class="col-head">
+        <span>Item</span><span>Qty</span><span>Price</span><span></span>
+      </div>
+      <div id="itemsContainer"></div>
+      <button type="button" class="add-item-btn" id="addItemBtn">+ Add Manual Item</button>
+    </div>
+
+    <div class="card">
+      <h2>Order Details</h2>
+      <div class="row2">
+        <div>
+          <label>Order #</label>
+          <input type="text" id="orderNo" readonly>
+        </div>
+        <div>
+          <label for="orderDate">Date</label>
+          <input type="text" id="orderDate" placeholder="auto">
+        </div>
+      </div>
+      <label>Discount</label>
+      <div class="row3">
+        <input type="number" id="discountValue" placeholder="0" min="0">
+        <select id="discountType">
+          <option value="egp">EGP</option>
+          <option value="pct">%</option>
+        </select>
+      </div>
+      <label for="paymentMethod">Payment method</label>
+      <input type="text" id="paymentMethod" placeholder="e.g. Cash on delivery">
+
+      <div class="totals">
+        <div class="line"><span>Subtotal</span><span id="subtotalVal">0 EGP</span></div>
+        <div class="line"><span>Discount</span><span id="discountVal">0 EGP</span></div>
+        <div class="line grand"><span>Total</span><span id="totalVal">0 EGP</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Store Policy (included in message)</h2>
+      <textarea id="policyText" rows="3">Replacement within 14 days of purchase. Item must be unused and in original packaging.</textarea>
+    </div>
+
+    <div class="card">
+      <h2>Message Preview</h2>
+      <div class="preview-box" id="previewBox">Fill in the details above to see the receipt preview.</div>
+    </div>
+
+  </div>
+
+  <!-- PRODUCTS TAB -->
+  <div class="tab-panel" id="tab-products">
+    <div class="card">
+      <h2>Fixed Product List</h2>
+      <div id="productListContainer"></div>
+      <button type="button" class="add-item-btn" id="addProductBtn">+ Add Product</button>
+      <button type="button" class="secondary-btn" id="saveProductsBtn" style="margin-top:10px;">Save Product List</button>
+    </div>
+  </div>
+
+  <!-- HISTORY TAB -->
+  <div class="tab-panel" id="tab-history">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <h2 style="margin:0;">Order History</h2>
+        <button type="button" class="secondary-btn" id="recycleBinBtn" style="width:auto;margin:0;padding:6px 12px;">🗑 Recycle Bin</button>
+      </div>
+      <div id="historyContainer">No orders yet.</div>
+    </div>
+    <div class="card" id="recycleBinCard" style="display:none;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <h2 style="margin:0;">Recycle Bin</h2>
+        <button type="button" class="secondary-btn" id="backToHistoryBtn" style="width:auto;margin:0;padding:6px 12px;">← Back</button>
+      </div>
+      <div id="recycleBinContainer">Empty.</div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <button class="btn print-btn" id="printBtn">🖨 Print</button>
+  <button class="btn send-btn" id="sendBtn">Send on WhatsApp</button>
+</footer>
+
+<div id="printArea"></div>
+
+<script>
+/* ===== Supabase Config ===== */
+const SUPABASE_URL = 'https://rmnbrntvrjmollepcrwt.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtbmJybnR2cmptb2xsZXBjcnd0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4MjA4NTMsImV4cCI6MjA5ODM5Njg1M30.jlNWEu4NdUZZYPXWd0mio9eVA3U2xCrHrPPJ0iGPaQA';
+const TABLE = 'sisies_kv';
+
+var _sbCache = {};
+
+async function sbGet(key, def){
+  try{
+    var res = await fetch(SUPABASE_URL + '/rest/v1/' + TABLE + '?key=eq.' + encodeURIComponent(key) + '&select=value', {
+      headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY }
+    });
+    var rows = await res.json();
+    if (rows && rows.length && rows[0].value !== null){
+      var parsed = JSON.parse(rows[0].value);
+      _sbCache[key] = parsed;
+      return parsed;
+    }
+  } catch(e){ console.warn('sbGet error', key, e); }
+  _sbCache[key] = def;
+  return def;
+}
+
+async function sbSet(key, val){
+  _sbCache[key] = val;
+  try{ localStorage.setItem(key, JSON.stringify(val)); } catch(e){}
+  var ss = document.getElementById('sync-status');
+  if (ss){ ss.style.color = '#f5a623'; ss.textContent = '↑ Saving…'; }
+  try{
+    var body = JSON.stringify({ key: key, value: JSON.stringify(val) });
+    await fetch(SUPABASE_URL + '/rest/v1/' + TABLE + '?key=eq.' + encodeURIComponent(key), {
+      method: 'DELETE',
+      headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY }
+    });
+    await fetch(SUPABASE_URL + '/rest/v1/' + TABLE, {
+      method: 'POST',
+      headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      body: body
+    });
+    if (ss){ ss.style.color = '#3a9b5c'; ss.textContent = '☁ Saved'; setTimeout(function(){ if(ss){ ss.style.color='#3a9b5c'; ss.textContent='☁ Cloud Sync Active'; }}, 1200); }
+  } catch(e){
+    console.warn('sbSet error', key, e);
+    if (ss){ ss.style.color = '#c0524b'; ss.textContent = '⚠ Offline (local only)'; }
+  }
+}
+
+function loadData(key, def){
+  if (key in _sbCache) return _sbCache[key];
+  try{ var v = JSON.parse(localStorage.getItem(key)); if (v !== null && v !== undefined){ _sbCache[key]=v; return v; } } catch(e){}
+  return def;
+}
+
+function saveData(key, val){
+  _sbCache[key] = val;
+  try{ localStorage.setItem(key, JSON.stringify(val)); } catch(e){}
+  sbSet(key, val);
+}
+
+var ALL_KEYS = ['sisies_products', 'sisies_orders', 'sisies_order_counter', 'sisies_deleted_orders'];
+
+async function bootApp(){
+  try{
+    var res = await fetch(SUPABASE_URL + '/rest/v1/' + TABLE + '?select=key,value', {
+      headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY }
+    });
+    var rows = await res.json();
+    if (Array.isArray(rows)){
+      rows.forEach(function(row){
+        try{ _sbCache[row.key] = JSON.parse(row.value); } catch(e){}
+      });
+    }
+  } catch(e){
+    console.warn('Supabase boot failed, using localStorage fallback', e);
+  }
+  document.getElementById('boot-overlay').style.display = 'none';
+  initApp();
+}
+
+/* ===== Tabs ===== */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    if (btn.dataset.tab === 'history') renderHistory();
+  });
+});
+
+/* ===== App State ===== */
+let PRODUCTS = [];
+let ORDERS = [];
+let DELETED_ORDERS = [];
+let ORDER_COUNTER = 0;
+
+const itemsContainer = document.getElementById('itemsContainer');
+const addItemBtn = document.getElementById('addItemBtn');
+const sendBtn = document.getElementById('sendBtn');
+const printBtn = document.getElementById('printBtn');
+const previewBox = document.getElementById('previewBox');
+const orderDateInput = document.getElementById('orderDate');
+const orderNoInput = document.getElementById('orderNo');
+const quickAddSelect = document.getElementById('quickAdd');
+
+function todayStr(){
+  const d = new Date();
+  return d.toLocaleDateString('en-GB');
+}
+
+function addItemRow(name='', qty=1, price=''){
+  const row = document.createElement('div');
+  row.className = 'item-row';
+  row.innerHTML = `
+    <input type="text" class="item-name" placeholder="Item name" value="${name}">
+    <input type="number" class="item-qty" min="1" value="${qty}">
+    <input type="number" class="item-price" placeholder="0" min="0" value="${price}">
+    <button type="button" class="remove-btn">&times;</button>
+  `;
+  row.querySelector('.remove-btn').addEventListener('click', () => {
+    row.remove();
+    updatePreview();
+  });
+  row.querySelectorAll('input').forEach(inp => inp.addEventListener('input', updatePreview));
+  itemsContainer.appendChild(row);
+}
+
+addItemBtn.addEventListener('click', () => { addItemRow(); updatePreview(); });
+
+document.getElementById('quickAddBtn').addEventListener('click', () => {
+  const id = quickAddSelect.value;
+  if (!id) return;
+  const p = PRODUCTS.find(x => String(x.id) === id);
+  if (p){ addItemRow(p.name, 1, p.price); updatePreview(); }
+});
+
+function getItems(){
+  return [...itemsContainer.querySelectorAll('.item-row')].map(row => ({
+    name: row.querySelector('.item-name').value.trim(),
+    qty: parseFloat(row.querySelector('.item-qty').value) || 0,
+    price: parseFloat(row.querySelector('.item-price').value) || 0
+  })).filter(i => i.name || i.price);
+}
+
+function fmt(n){
+  return n.toLocaleString('en-US', {maximumFractionDigits:2}) + ' EGP';
+}
+
+function calcDiscount(subtotal){
+  const dType = document.getElementById('discountType').value;
+  const dVal = parseFloat(document.getElementById('discountValue').value) || 0;
+  if (dType === 'pct') return subtotal * (dVal / 100);
+  return dVal;
+}
+
+function buildReceiptData(){
+  const custName = document.getElementById('custName').value.trim();
+  const custPhone = document.getElementById('custPhone').value.trim();
+  const orderNo = orderNoInput.value.trim();
+  const orderDate = orderDateInput.value.trim() || todayStr();
+  const payment = document.getElementById('paymentMethod').value.trim();
+  const policy = document.getElementById('policyText').value.trim();
+  const items = getItems();
+  const subtotal = items.reduce((sum, i) => sum + i.qty * i.price, 0);
+  const discount = calcDiscount(subtotal);
+  const total = Math.max(subtotal - discount, 0);
+  const dType = document.getElementById('discountType').value;
+  const dVal = parseFloat(document.getElementById('discountValue').value) || 0;
+
+  return { custName, custPhone, orderNo, orderDate, payment, policy, items, subtotal, discount, total, dType, dVal };
+}
+
+function buildMessage(data){
+  let lines = [];
+  lines.push('*SISIES*');
+  lines.push('_Receipt_');
+  lines.push('');
+  if (data.orderNo) lines.push(`Order #: ${data.orderNo}`);
+  lines.push(`Date: ${data.orderDate}`);
+  if (data.custName) lines.push(`Customer: ${data.custName}`);
+  lines.push('');
+  lines.push('*Items:*');
+  if (data.items.length === 0){
+    lines.push('(no items added)');
+  } else {
+    data.items.forEach(i => {
+      lines.push(`• ${i.name} x${i.qty} — ${fmt(i.qty * i.price)}`);
+    });
+  }
+  lines.push('');
+  lines.push(`Subtotal: ${fmt(data.subtotal)}`);
+  if (data.discount > 0){
+    const dLabel = data.dType === 'pct' ? `${data.dVal}%` : fmt(data.dVal);
+    lines.push(`Discount (${dLabel}): -${fmt(data.discount)}`);
+  }
+  lines.push(`*Total: ${fmt(data.total)}*`);
+  if (data.payment) lines.push(`Payment: ${data.payment}`);
+  if (data.policy){
+    lines.push('');
+    lines.push(`_${data.policy}_`);
+  }
+  lines.push('');
+  lines.push('Thank you for shopping with Sisies! 🤍');
+  return lines.join('\n');
+}
+
+function updatePreview(){
+  const data = buildReceiptData();
+  document.getElementById('subtotalVal').textContent = fmt(data.subtotal);
+  document.getElementById('discountVal').textContent = fmt(data.discount);
+  document.getElementById('totalVal').textContent = fmt(data.total);
+  previewBox.textContent = buildMessage(data);
+  const phone = data.custPhone;
+  const disabled = !phone || data.items.length === 0;
+  sendBtn.disabled = disabled;
+  printBtn.disabled = data.items.length === 0;
+}
+
+document.querySelectorAll('#custName, #custPhone, #orderDate, #discountValue, #discountType, #paymentMethod, #policyText')
+  .forEach(el => el.addEventListener('input', updatePreview));
+document.getElementById('discountType').addEventListener('change', updatePreview);
+
+async function nextOrderNumber(){
+  ORDER_COUNTER = (ORDER_COUNTER || 0) + 1;
+  saveData('sisies_order_counter', ORDER_COUNTER);
+  return String(ORDER_COUNTER).padStart(4, '0');
+}
+
+async function recordOrder(data){
+  ORDERS.push({
+    orderNo: data.orderNo,
+    date: data.orderDate,
+    customerName: data.custName,
+    customerPhone: data.custPhone,
+    items: data.items,
+    discountType: data.dType,
+    discountValue: data.dVal,
+    discount: data.discount,
+    subtotal: data.subtotal,
+    total: data.total,
+    payment: data.payment,
+    createdAt: new Date().toISOString()
+  });
+  saveData('sisies_orders', ORDERS);
+}
+
+async function resetFormForNextOrder(){
+  document.getElementById('custName').value = '';
+  document.getElementById('custPhone').value = '';
+  document.getElementById('discountValue').value = '';
+  document.getElementById('paymentMethod').value = '';
+  itemsContainer.innerHTML = '';
+  addItemRow();
+  orderDateInput.value = todayStr();
+  orderNoInput.value = await nextOrderNumber();
+  updatePreview();
+}
+
+sendBtn.addEventListener('click', async () => {
+  const data = buildReceiptData();
+  if (!data.custPhone){ alert('Please enter the customer WhatsApp number.'); return; }
+  if (data.items.length === 0){ alert('Please add at least one item.'); return; }
+  const message = buildMessage(data);
+  const phone = data.custPhone.replace(/\D/g, '');
+  await recordOrder(data);
+  const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+  window.open(url, '_blank');
+  await resetFormForNextOrder();
+});
+
+printBtn.addEventListener('click', async () => {
+  const data = buildReceiptData();
+  if (data.items.length === 0){ alert('Please add at least one item.'); return; }
+  const itemsHtml = data.items.map(i =>
+    `<tr><td>${i.name}</td><td style="text-align:center;">x${i.qty}</td><td style="text-align:right;">${fmt(i.qty*i.price)}</td></tr>`
+  ).join('');
+  const dLabel = data.dType === 'pct' ? `${data.dVal}%` : '';
+  document.getElementById('printArea').innerHTML = `
+    <div style="max-width:340px;margin:0 auto;">
+      <h2 style="text-align:center;letter-spacing:3px;margin-bottom:0;">SISIES</h2>
+      <p style="text-align:center;font-size:11px;color:#888;margin-top:2px;">EST. 2025</p>
+      <hr>
+      <p style="font-size:13px;">Order #: ${data.orderNo}<br>Date: ${data.orderDate}<br>${data.custName ? 'Customer: '+data.custName+'<br>' : ''}${data.custPhone ? 'Phone: '+data.custPhone : ''}</p>
+      <table style="width:100%;border-collapse:collapse;font-size:13px;">
+        <thead><tr style="border-bottom:1px solid #333;"><th style="text-align:left;">Item</th><th>Qty</th><th style="text-align:right;">Price</th></tr></thead>
+        <tbody>${itemsHtml}</tbody>
+      </table>
+      <hr>
+      <p style="font-size:13px;text-align:right;">
+        Subtotal: ${fmt(data.subtotal)}<br>
+        ${data.discount > 0 ? `Discount (${dLabel||fmt(data.dVal)}): -${fmt(data.discount)}<br>` : ''}
+        <strong style="font-size:16px;">Total: ${fmt(data.total)}</strong>
+      </p>
+      ${data.payment ? `<p style="font-size:12px;">Payment: ${data.payment}</p>` : ''}
+      <hr>
+      <p style="font-size:11px;font-style:italic;">${data.policy}</p>
+      <p style="text-align:center;font-size:12px;margin-top:14px;">Thank you for shopping with Sisies!</p>
+    </div>
+  `;
+  await recordOrder(data);
+  window.print();
+  await resetFormForNextOrder();
+});
+
+/* ===== Products Tab ===== */
+const productListContainer = document.getElementById('productListContainer');
+const addProductBtn = document.getElementById('addProductBtn');
+const saveProductsBtn = document.getElementById('saveProductsBtn');
+
+function renderProductRows(){
+  productListContainer.innerHTML = '';
+  PRODUCTS.forEach((p, idx) => addProductRow(p.name, p.price, idx));
+}
+
+function addProductRow(name='', price='', idx=null){
+  const row = document.createElement('div');
+  row.className = 'product-list-row';
+  row.innerHTML = `
+    <input type="text" class="prod-name" placeholder="Product name" value="${name}">
+    <input type="number" class="prod-price" placeholder="Price" min="0" value="${price}">
+    <button type="button" class="remove-btn">&times;</button>
+  `;
+  row.querySelector('.remove-btn').addEventListener('click', () => row.remove());
+  productListContainer.appendChild(row);
+}
+
+addProductBtn.addEventListener('click', () => addProductRow());
+
+saveProductsBtn.addEventListener('click', () => {
+  const rows = [...productListContainer.querySelectorAll('.product-list-row')];
+  PRODUCTS = rows.map((row, idx) => ({
+    id: idx + 1,
+    name: row.querySelector('.prod-name').value.trim(),
+    price: parseFloat(row.querySelector('.prod-price').value) || 0
+  })).filter(p => p.name);
+  saveData('sisies_products', PRODUCTS);
+  renderQuickAddOptions();
+  alert('Product list saved.');
+});
+
+function renderQuickAddOptions(){
+  quickAddSelect.innerHTML = '<option value="">Select product…</option>' +
+    PRODUCTS.map(p => `<option value="${p.id}">${p.name} — ${fmt(p.price)}</option>`).join('');
+}
+
+/* ===== History Tab ===== */
+function renderHistory(){
+  const container = document.getElementById('historyContainer');
+  if (!ORDERS.length){ container.innerHTML = 'No orders yet.'; return; }
+  container.innerHTML = [...ORDERS].reverse().map(o => `
+    <div class="order-hist-item">
+      <div class="oh-top">
+        <span>#${o.orderNo}</span>
+        <span style="display:flex;align-items:center;gap:10px;">
+          ${fmt(o.total)}
+          <button type="button" class="remove-btn delete-order-btn" data-orderno="${o.orderNo}" title="Delete">&times;</button>
+        </span>
+      </div>
+      <div class="oh-sub">${o.date} • ${o.customerName || 'No name'} • ${o.customerPhone || ''}</div>
+      <div class="oh-sub">${o.items.map(i => i.name + ' x' + i.qty).join(', ')}</div>
+    </div>
+  `).join('');
+  container.querySelectorAll('.delete-order-btn').forEach(btn => {
+    btn.addEventListener('click', () => deleteOrder(btn.dataset.orderno));
+  });
+}
+
+function deleteOrder(orderNo){
+  if (!confirm(`Move order #${orderNo} to the recycle bin?`)) return;
+  const idx = ORDERS.findIndex(o => o.orderNo === orderNo);
+  if (idx === -1) return;
+  const [removed] = ORDERS.splice(idx, 1);
+  removed.deletedAt = new Date().toISOString();
+  DELETED_ORDERS.push(removed);
+  saveData('sisies_orders', ORDERS);
+  saveData('sisies_deleted_orders', DELETED_ORDERS);
+  renderHistory();
+}
+
+function restoreOrder(orderNo){
+  const idx = DELETED_ORDERS.findIndex(o => o.orderNo === orderNo);
+  if (idx === -1) return;
+  const [removed] = DELETED_ORDERS.splice(idx, 1);
+  delete removed.deletedAt;
+  ORDERS.push(removed);
+  saveData('sisies_orders', ORDERS);
+  saveData('sisies_deleted_orders', DELETED_ORDERS);
+  renderRecycleBin();
+}
+
+function permanentlyDeleteOrder(orderNo){
+  if (!confirm(`Permanently delete order #${orderNo}? This cannot be undone.`)) return;
+  DELETED_ORDERS = DELETED_ORDERS.filter(o => o.orderNo !== orderNo);
+  saveData('sisies_deleted_orders', DELETED_ORDERS);
+  renderRecycleBin();
+}
+
+function renderRecycleBin(){
+  const container = document.getElementById('recycleBinContainer');
+  if (!DELETED_ORDERS.length){ container.innerHTML = 'Empty.'; return; }
+  container.innerHTML = [...DELETED_ORDERS].reverse().map(o => `
+    <div class="order-hist-item">
+      <div class="oh-top"><span>#${o.orderNo}</span><span>${fmt(o.total)}</span></div>
+      <div class="oh-sub">${o.date} • ${o.customerName || 'No name'} • ${o.customerPhone || ''}</div>
+      <div class="oh-sub">${o.items.map(i => i.name + ' x' + i.qty).join(', ')}</div>
+      <div style="display:flex;gap:8px;margin-top:8px;">
+        <button type="button" class="secondary-btn restore-btn" data-orderno="${o.orderNo}" style="width:auto;margin:0;padding:6px 12px;">↺ Restore</button>
+        <button type="button" class="secondary-btn perm-delete-btn" data-orderno="${o.orderNo}" style="width:auto;margin:0;padding:6px 12px;color:var(--danger);border-color:var(--danger);">Delete Forever</button>
+      </div>
+    </div>
+  `).join('');
+  container.querySelectorAll('.restore-btn').forEach(btn => {
+    btn.addEventListener('click', () => restoreOrder(btn.dataset.orderno));
+  });
+  container.querySelectorAll('.perm-delete-btn').forEach(btn => {
+    btn.addEventListener('click', () => permanentlyDeleteOrder(btn.dataset.orderno));
+  });
+}
+
+document.getElementById('recycleBinBtn').addEventListener('click', () => {
+  document.getElementById('historyContainer').parentElement.style.display = 'none';
+  document.getElementById('recycleBinCard').style.display = 'block';
+  renderRecycleBin();
+});
+document.getElementById('backToHistoryBtn').addEventListener('click', () => {
+  document.getElementById('recycleBinCard').style.display = 'none';
+  document.getElementById('historyContainer').parentElement.style.display = 'block';
+  renderHistory();
+});
+
+/* ===== Init ===== */
+async function initApp(){
+  PRODUCTS = await sbGet('sisies_products', []);
+  ORDERS = await sbGet('sisies_orders', []);
+  DELETED_ORDERS = await sbGet('sisies_deleted_orders', []);
+  ORDER_COUNTER = await sbGet('sisies_order_counter', 0);
+
+  renderProductRows();
+  renderQuickAddOptions();
+
+  itemsContainer.innerHTML = '';
+  addItemRow();
+  orderDateInput.value = todayStr();
+  orderNoInput.value = String((ORDER_COUNTER || 0) + 1).padStart(4, '0');
+
+  updatePreview();
+}
+
+window.addEventListener('DOMContentLoaded', function(){ bootApp(); });
+</script>
+
+</body>
+</html>
