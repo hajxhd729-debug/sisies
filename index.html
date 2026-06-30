@@ -9,6 +9,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Sisies">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#5a4632">
 <style>
   :root{
@@ -860,6 +861,12 @@ async function initApp(){
 }
 
 window.addEventListener('DOMContentLoaded', function(){ bootApp(); });
+
+if ('serviceWorker' in navigator){
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('sw.js').catch(function(e){ console.warn('SW register failed', e); });
+  });
+}
 </script>
 
 </body>
