@@ -2,8 +2,8 @@
 // - App page: network first, so updates arrive immediately; cached copy when offline.
 // - Fonts and product photos: cached, so the sell screen still looks right with no signal.
 // - Supabase and the website catalog: never cached (always live data).
-const CACHE = 'sisies-v2-1';
-const SHELL = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
+const CACHE = 'sisies-v2-2';
+const SHELL = ['./', './index.html', './manifest.json', './logo.png', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 const ASSET_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com', 'cdn.shopify.com', 'cdn.jsdelivr.net'];
 
 self.addEventListener('install', (e) => {

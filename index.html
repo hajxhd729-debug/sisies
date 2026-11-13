@@ -43,19 +43,17 @@ svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stro
 /* ---------- Splash ---------- */
 #splash{position:fixed;inset:0;z-index:200;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .8s var(--ease),transform 1s var(--ease)}
 #splash.hide{opacity:0;transform:scale(1.08);pointer-events:none}
-#splash svg{width:124px;height:124px;overflow:visible}
-#splash circle{fill:none;stroke:var(--bronze);stroke-width:1.4;stroke-dasharray:340;stroke-dashoffset:340;animation:drawc 1.5s var(--ease) forwards;transform:rotate(-90deg);transform-origin:60px 60px}
-#splash text{font-family:var(--serif);font-size:66px;font-weight:500;fill:var(--esp);opacity:0;animation:fadeIn 1s .55s var(--ease) forwards}
-#splash .word{font-family:var(--serif);font-size:30px;font-weight:600;color:var(--esp);margin-top:28px;padding-left:.42em;opacity:0;animation:word 1.4s .85s var(--ease) forwards}
-#splash .tag{font-size:10px;letter-spacing:.34em;text-transform:uppercase;color:var(--ink3);margin-top:12px;opacity:0;animation:fadeIn 1s 1.35s forwards}
-@keyframes drawc{to{stroke-dashoffset:0}}
+#splash .sp-logo{width:min(62vw,280px);height:auto;clip-path:inset(0 100% 0 0);opacity:.2;transform:translateY(8px);animation:reveal 1.5s .15s var(--ease) forwards}
+#splash .sp-line{width:0;height:1px;background:var(--bronze);margin-top:22px;animation:line 1.2s .9s var(--ease) forwards}
+#splash .tag{font-size:10px;letter-spacing:.34em;text-transform:uppercase;color:var(--ink3);margin-top:14px;opacity:0;animation:fadeIn 1s 1.3s forwards}
+@keyframes reveal{to{clip-path:inset(0 0 0 0);opacity:1;transform:none}}
+@keyframes line{to{width:min(40vw,170px)}}
 @keyframes fadeIn{to{opacity:1}}
-@keyframes word{from{opacity:0;letter-spacing:.95em}to{opacity:1;letter-spacing:.42em}}
 
 /* ---------- Lock ---------- */
 #lock{position:fixed;inset:0;z-index:150;background:var(--bg);display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px}
 #lock.show{display:flex;animation:fadeIn .5s both}
-#lock .mono{width:64px;height:64px;font-size:36px}
+#lock .lk-logo{width:170px;height:auto}
 .lk-t{font-family:var(--serif);font-size:34px;font-weight:500;margin-top:22px}
 .lk-s{color:var(--ink3);font-size:14px;margin-top:6px}
 .pin-dots{display:flex;gap:18px;margin:28px 0 36px}
@@ -71,10 +69,11 @@ svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stro
 
 /* ---------- Header ---------- */
 .top{position:sticky;top:0;z-index:30;display:flex;align-items:center;justify-content:space-between;padding:calc(12px + env(safe-area-inset-top)) 20px 12px;background:rgba(246,241,234,.8);backdrop-filter:saturate(1.4) blur(16px);-webkit-backdrop-filter:saturate(1.4) blur(16px);border-bottom:1px solid rgba(234,223,210,.7)}
-.brand{display:flex;align-items:center;gap:12px}
+.brand{display:flex;flex-direction:column;align-items:flex-start;gap:5px}
+.brand-logo{height:22px;width:auto;display:block}
 .mono{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--bronze);display:grid;place-items:center;font-family:var(--serif);font-size:24px;font-weight:500;color:var(--esp);background:var(--paper);flex-shrink:0}
 .brand-name{font-family:var(--serif);font-size:21px;font-weight:600;letter-spacing:.34em;line-height:1}
-.brand-sub{font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-top:5px;font-weight:600}
+.brand-sub{font-size:9px;letter-spacing:.26em;text-transform:uppercase;color:var(--ink3);font-weight:700}
 .top-r{display:flex;align-items:center;gap:8px}
 .sync{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:700;color:var(--ink2);padding:8px 11px;border-radius:99px;background:var(--paper);border:1px solid var(--line);white-space:nowrap}
 .sync i{width:7px;height:7px;border-radius:50%;background:var(--good);box-shadow:0 0 0 3px var(--good-l)}
@@ -302,6 +301,19 @@ textarea.inp{resize:vertical;min-height:84px;line-height:1.45}
 .stock-head{display:grid;grid-template-columns:40px 1fr 64px 76px 30px;gap:8px;font-size:9.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);padding-bottom:6px}
 
 /* misc */
+.q-card{display:flex;align-items:center;gap:14px;width:100%;text-align:left;margin-top:16px;padding:14px 16px;border-radius:20px;background:#E8F1E5;border:1px solid #CFE0CB;color:#24452F;box-shadow:var(--sh)}
+.q-card .q-ic{width:42px;height:42px;border-radius:50%;background:#2F6E4B;color:#fff;display:grid;place-items:center;flex-shrink:0;animation:pulseRing 2.2s infinite}
+.q-card .mid{flex:1;min-width:0}
+.q-card b{display:block;font-size:15px}
+.q-card small{font-size:12px;opacity:.75}
+@keyframes pulseRing{0%{box-shadow:0 0 0 0 rgba(47,110,75,.45)}70%{box-shadow:0 0 0 12px rgba(47,110,75,0)}100%{box-shadow:0 0 0 0 rgba(47,110,75,0)}}
+.q-item{border-bottom:1px solid var(--line2);padding:6px 0 14px}
+.q-item:last-child{border-bottom:0}
+.cta.sm{padding:11px;font-size:13px;border-radius:14px}
+.note{background:var(--warn-l);color:#7A5A1E;border-radius:14px;padding:12px 14px;font-size:13px;line-height:1.45;margin-bottom:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.note.good{background:var(--good-l);color:#24452F}
+.pill.send{background:var(--good-l);color:#2F6E4B}
+.dock .bdg.q{background:#2F6E4B}
 .toast{position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top));transform:translate(-50%,-160%);z-index:300;background:var(--esp);color:#F6EEE3;padding:12px 18px;border-radius:99px;font-size:13px;font-weight:700;box-shadow:var(--sh2);transition:transform .55s var(--ease);display:flex;gap:8px;align-items:center;max-width:90vw}
 .toast.show{transform:translate(-50%,0)}
 .confetti{position:fixed;inset:0;pointer-events:none;z-index:120}
@@ -322,13 +334,13 @@ textarea.inp{resize:vertical;min-height:84px;line-height:1.45}
 <body>
 
 <div id="splash">
-  <svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="54"/><text x="60" y="64" text-anchor="middle" dominant-baseline="middle">S</text></svg>
-  <div class="word">SISIES</div>
+  <img class="sp-logo" src="logo.png" alt="Sisies">
+  <div class="sp-line"></div>
   <div class="tag">Est. 2025</div>
 </div>
 
 <div id="lock">
-  <div class="mono">S</div>
+  <img class="lk-logo" src="logo.png" alt="Sisies">
   <div class="lk-t" id="lkT">Welcome back</div>
   <div class="lk-s" id="lkS">Enter your PIN</div>
   <div class="pin-dots" id="lkD"><i></i><i></i><i></i><i></i></div>
@@ -337,7 +349,7 @@ textarea.inp{resize:vertical;min-height:84px;line-height:1.45}
 </div>
 
 <header class="top">
-  <div class="brand"><div class="mono">S</div><div><div class="brand-name">SISIES</div><div class="brand-sub">Boutique Studio</div></div></div>
+  <div class="brand"><img class="brand-logo" src="logo.png" alt="Sisies"><div class="brand-sub">Boutique Studio</div></div>
   <div class="top-r"><div class="sync" id="sync"><i></i><span>Synced</span></div><button class="icon-btn" id="setBtn" data-act="settings" aria-label="Settings"></button></div>
 </header>
 
@@ -517,7 +529,7 @@ const Store={
       }
       this.failed=false;
     }catch(e){console.warn('sync failed',e);this.failed=true;clearTimeout(this.retry);this.retry=setTimeout(()=>this.flush(),15000)}
-    finally{this.flushing=false;setSync();if(changed)render(true);if(this.again){this.again=false;this.flush()}}
+    finally{this.flushing=false;setSync();if(changed)onRemote();if(this.again){this.again=false;this.flush()}}
   }
 };
 
@@ -586,6 +598,24 @@ function activeEvent(){const id=settings().activeEventId;return events().find(e=
 function setEvent(ev){ev.updatedAt=new Date().toISOString();const list=events();const i=list.findIndex(e=>e.id===ev.id);Store.set(K.events,i<0?[...list,ev]:list.map(e=>e.id===ev.id?ev:e))}
 function updateOrder(id,patch){Store.set(K.ledger,Store.get(K.ledger,[]).map(o=>o.id===id?{...o,...patch,updatedAt:new Date().toISOString()}:o))}
 const nextNo=()=>pad4(maxNo(Store.get(K.ledger,[]))+1);
+
+/* WhatsApp send queue: any device can sell; the phone with the Sisies WhatsApp sends the receipts. */
+const isWaDevice=()=>{try{return localStorage.getItem(LS+'sisies_wa_device')==='1'}catch(e){return false}};
+const setWaDevice=on=>{try{localStorage.setItem(LS+'sisies_wa_device',on?'1':'0')}catch(e){}};
+const pendingReceipts=()=>liveOrders().filter(o=>o.wa?.status==='pending').sort((a,b)=>a.createdAt.localeCompare(b.createdAt));
+function sendWa(o){
+  const n=normPhone(o.customer?.phone);if(n.length<10){toast('This order has no valid WhatsApp number');return false}
+  window.open(`https://wa.me/${n}?text=${encodeURIComponent(receiptText(o))}`,'_blank');
+  updateOrder(o.id,{wa:{...(o.wa||{}),status:'sent',sentAt:new Date().toISOString()}});return true;
+}
+// Called whenever data arrives from another device.
+function onRemote(){
+  const n=pendingReceipts().length;
+  if(isWaDevice()&&S.lastPending!==undefined&&n>S.lastPending){toast(`${ic('chat')} New receipt to send`);if(navigator.vibrate)navigator.vibrate([80,60,80])}
+  S.lastPending=n;
+  if(S.qDraw)S.qDraw();
+  if(!sheetEl)render(true);else{renderBadges()}
+}
 
 function variantsOf(p){const vs=[...(p.variants||[])];(p.extraColors||[]).forEach(c=>{if(c&&!vs.some(x=>x.color.toLowerCase()===c.toLowerCase()))vs.push({id:'x-'+c,color:c,price:null,image:null,available:true})});return vs.length?vs:[{id:'d',color:'One colour',price:p.price||0}]}
 const sameColor=(a,b)=>(a||'').toLowerCase().trim()===(b||'').toLowerCase().trim();
@@ -674,9 +704,12 @@ function vHome(){
   live.filter(o=>Date.parse(o.createdAt)>=since).forEach(o=>(o.items||[]).forEach(i=>{const k=i.productId||i.title;agg[k]=agg[k]||{title:i.title,image:i.image||productById(i.productId)?.images?.[0],qty:0,rev:0};agg[k].qty+=+i.qty||0;agg[k].rev+=(+i.qty||0)*(+i.price||0)}));
   const best=Object.values(agg).sort((a,b)=>b.qty-a.qty).slice(0,4);
   const recent=[...live].sort((a,b)=>b.createdAt.localeCompare(a.createdAt)).slice(0,3);
+  const pend=pendingReceipts().length;
+  const qCard=pend?`<button class="q-card rise" style="--i:1" data-act="queue"><span class="q-ic">${ic('chat')}</span><span class="mid"><b>${pend} receipt${pend>1?'s':''} to send</b><small>${isWaDevice()?'Tap to send them from this phone':'Waiting for the Sisies WhatsApp phone'}</small></span>${ic('chev')}</button>`:'';
   return `
   <div class="eyebrow rise">${now.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'})}</div>
   <h1 class="title rise" style="--i:1">${greet},<br><em>welcome back.</em></h1>
+  ${qCard}
   <div class="hero rise" style="--i:1"><div class="shine"></div>
     <div class="lbl">Today's sales</div>
     <div class="big"><span data-count="${tRev}">0</span><small>LE</small>${trend}</div>
@@ -722,7 +755,7 @@ function orderRow(o){
   return `<button class="row" data-act="order" data-id="${esc(o.id)}"><div class="av">${esc(initials(o.customer?.name))}</div>
     <div class="mid"><div class="t">${esc(name)} <span class="muted" style="font-size:11px;font-weight:600">· No. ${esc(o.no)}</span></div>
     <div class="s">${esc((o.items||[]).map(i=>i.title+(i.qty>1?' ×'+i.qty:'')).join(', '))}</div>
-    <div style="display:flex;gap:6px;margin-top:6px">${o.payment?`<span class="pill">${esc(o.payment)}</span>`:''}${ev?`<span class="pill bz">${esc(ev.name)}</span>`:''}${o.deleted?'<span class="pill del">In bin</span>':''}</div></div>
+    <div style="display:flex;gap:6px;margin-top:6px">${o.payment?`<span class="pill">${esc(o.payment)}</span>`:''}${ev?`<span class="pill bz">${esc(ev.name)}</span>`:''}${o.wa?.status==='pending'&&!o.deleted?'<span class="pill send">To send</span>':''}${o.deleted?'<span class="pill del">In bin</span>':''}</div></div>
     <div class="amt">${fmt(o.total)}<small>${fmtTime(o.createdAt)}</small></div></button>`;
 }
 function ordersList(){
@@ -730,6 +763,7 @@ function ordersList(){
   let list=ledgerAll().filter(o=>S.of==='bin'?o.deleted:!o.deleted);
   if(S.of==='today')list=list.filter(o=>isoDay(o.createdAt)===today);
   if(S.of==='bazar')list=list.filter(o=>o.eventId);
+  if(S.of==='send')list=list.filter(o=>o.wa?.status==='pending');
   if(q)list=list.filter(o=>[o.no,o.customer?.name,o.customer?.phone,o.payment,...(o.items||[]).map(i=>i.title+' '+i.color)].join(' ').toLowerCase().includes(q));
   list.sort((a,b)=>b.createdAt.localeCompare(a.createdAt));
   if(!list.length)return `<div class="empty"><div class="serif">${S.of==='bin'?'The bin is empty':'Nothing here yet'}</div>${q?'Try a different search.':''}</div>`;
@@ -738,7 +772,8 @@ function ordersList(){
 }
 function vOrders(){
   const n=liveOrders().length;
-  const fs=[['all','All'],['today','Today'],['bazar','Bazar'],['bin','Bin']];
+  const pq=pendingReceipts().length;
+  const fs=[['all','All'],['send',`To send${pq?' · '+pq:''}`],['today','Today'],['bazar','Bazar'],['bin','Bin']];
   return `
   <div class="eyebrow rise">${n} order${n===1?'':'s'} · ${LE(sum(liveOrders(),'total'))}</div>
   <h1 class="title rise" style="--i:1">Order <em>history</em></h1>
@@ -787,14 +822,15 @@ function render(quiet){
   el.innerHTML=VIEWS[S.view]();
   if(!quiet){el.classList.remove('view-in');void el.offsetWidth;el.classList.add('view-in')}
   $$('#dock button').forEach(b=>b.classList.toggle('on',b.dataset.view===S.view));
-  animateCounts(el,quiet);imgFade(el);renderBagBar();
+  animateCounts(el,quiet);imgFade(el);renderBadges();
   const q=$('#oq');if(q)q.addEventListener('input',()=>{S.oq=q.value;$('#olist').innerHTML=ordersList()});
 }
 function renderDock(){
   const it=[['home','home','Home'],['sell','bag','Sell'],['orders','receipt','Orders'],['bazar','store','Bazar']];
-  $('#dock').innerHTML=it.map(([k,i,l])=>`<button data-act="nav" data-view="${k}">${ic(i)}<span>${l}</span>${k==='sell'?'<span class="bdg" id="bagBdg" hidden></span>':''}</button>`).join('');
+  $('#dock').innerHTML=it.map(([k,i,l])=>`<button data-act="nav" data-view="${k}">${ic(i)}<span>${l}</span>${k==='sell'?'<span class="bdg" id="bagBdg" hidden></span>':''}${k==='orders'?'<span class="bdg q" id="qBdg" hidden></span>':''}</button>`).join('');
   $('#setBtn').innerHTML=ic('sliders');
 }
+function renderBadges(){renderBagBar();const qb=$('#qBdg');if(qb){const n=pendingReceipts().length;qb.hidden=!n;qb.textContent=n}}
 function renderBagBar(bump){
   const bb=$('#bagbar');const n=S.bag.reduce((s,b)=>s+b.qty,0),t=S.bag.reduce((s,b)=>s+b.qty*b.price,0);
   bb.querySelector('.n').textContent=n;bb.querySelector('.tot').innerHTML=`${LE(t)} ${ic('chev')}`;
@@ -892,7 +928,8 @@ function completeSale(){
   const order={id:uid(),no:nextNo(),createdAt:now,updatedAt:now,date:gbDate(now),
     customer:{name:co.name.trim(),phone:co.phone.trim()},items:S.bag.map(({key,...b})=>b),
     subtotal:c.sub,discountType:c.type,discountValue:c.val,discount:c.disc,total:c.total,payment:co.pay,
-    eventId:co.bazar&&ev?ev.id:null,deleted:false};
+    eventId:co.bazar&&ev?ev.id:null,deleted:false,
+    wa:co.phone.trim()?{status:'pending',queuedAt:now}:null};
   Store.set(K.ledger,[...Store.get(K.ledger,[]),order]);
   S.bag=[];S.co=null;saveBag();closeSheet(true);render(true);confetti();openReceipt(order.id,true);
 }
@@ -923,12 +960,12 @@ async function drawReceipt(o){
   const SER='"Cormorant Garamond", Georgia, serif',SAN='Manrope, "Segoe UI", Arial, sans-serif';
   try{await Promise.all([`500 80px ${SER}`,`600 60px ${SER}`,`italic 500 50px ${SER}`,`700 30px ${SAN}`,`500 24px ${SAN}`].map(fn=>document.fonts.load(fn)))}catch(e){}
   const W=1080,M=40,P=112,cx=W/2,s=settings();
-  const thumbs=await Promise.all((o.items||[]).map(i=>loadImg(i.image?img(i.image,240):null)));
+  const [logo,...thumbs]=await Promise.all([loadImg('logo.png'),...(o.items||[]).map(i=>loadImg(i.image?img(i.image,240):null))]);
   const c=document.createElement('canvas');c.width=W;c.height=2400+(o.items||[]).length*180;const x=c.getContext('2d');
-  let y=160;
-  x.strokeStyle='#B08A60';x.lineWidth=3;x.beginPath();x.arc(cx,y,64,0,Math.PI*2);x.stroke();
-  x.textBaseline='middle';txt(x,'S',cx,y+4,{font:`500 88px ${SER}`,color:'#33251B',align:'center'});x.textBaseline='alphabetic';
-  y+=152;txt(x,'SISIES',cx,y,{font:`600 64px ${SER}`,color:'#33251B',align:'center',ls:24});
+  let y=130;
+  if(logo){const lw=560,lh=logo.height*lw/logo.width;x.drawImage(logo,cx-lw/2,y,lw,lh);y+=lh+34}
+  else{y+=90;txt(x,'SISIES',cx,y,{font:`600 64px ${SER}`,color:'#5C432F',align:'center',ls:24});y+=10}
+  x.fillStyle='#B08A60';x.fillRect(cx-90,y,180,2);y+=12;
   y+=54;txt(x,'RECEIPT  ·  No. '+o.no,cx,y,{font:`700 22px ${SAN}`,color:'#A6978A',align:'center',ls:6});
   y+=42;txt(x,fmtLong(o.createdAt),cx,y,{font:`500 24px ${SAN}`,color:'#A6978A',align:'center'});
   if(o.customer?.name){y+=88;txt(x,'Thank you, '+o.customer.name.trim().split(/\s+/)[0],cx,y,{font:`italic 500 56px ${SER}`,color:'#33251B',align:'center'})}
@@ -965,17 +1002,28 @@ async function openReceipt(id,celebrate){
     ${celebrate?`<div class="success"><div class="check"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div><div class="sh-title">Sale complete</div><div class="muted" style="margin-top:4px">Order No. ${esc(o.no)} · ${LE(o.total)}</div></div>`
       :`<div class="sh-head"><div><div class="eyebrow" style="margin:0">Order No. ${esc(o.no)}</div><div class="sh-title" style="margin-top:6px">Receipt</div></div><button class="x" data-close aria-label="Close">${ic('x')}</button></div>`}
     <div class="rc-prev" id="rcPrev"><div class="spin"></div></div>
-    ${o.customer?.phone?'':`<div class="field"><label>Customer WhatsApp</label><input class="inp" id="rcPhone" type="tel" inputmode="tel" placeholder="010…"></div>`}
-    <div class="btn-row"><button class="cta green" id="rcWa">${ic('chat')} WhatsApp</button><button class="cta ghost" id="rcShare">${ic('share')} Share image</button></div>
-    <div class="btn-row mt"><button class="cta ghost" id="rcPrint">${ic('print')} Print</button><button class="cta ghost" data-close>Done</button></div>`);
+    <div id="rcWaBox"></div>
+    <div class="btn-row mt"><button class="cta ghost" id="rcShare">${ic('share')} Share image</button><button class="cta ghost" id="rcPrint">${ic('print')} Print</button></div>
+    <button class="cta ghost mt" data-close>Done</button>`);
   let canvas=null,url='';
   const ready=drawReceipt(o).then(cv=>{canvas=cv;url=cv.toDataURL('image/png');const pv=$('#rcPrev',sh);if(pv)pv.innerHTML=`<img src="${url}" alt="Receipt">`}).catch(e=>{console.warn(e);const pv=$('#rcPrev',sh);if(pv)pv.innerHTML='<div class="muted" style="padding:20px">Preview unavailable</div>'});
-  $('#rcWa',sh).onclick=()=>{
-    const inp=$('#rcPhone',sh);const raw=o.customer?.phone||inp?.value||'';const n=normPhone(raw);
-    if(n.length<10){toast('Add the customer’s WhatsApp number');inp?.focus();return}
-    if(!o.customer?.phone)updateOrder(o.id,{customer:{...o.customer,phone:raw.trim()}});
-    window.open(`https://wa.me/${n}?text=${encodeURIComponent(receiptText(getOrder(o.id)||o))}`,'_blank');
+  // WhatsApp area: depends on whether this device holds the Sisies WhatsApp, and on the receipt's queue status.
+  const drawWa=()=>{
+    const cur=getOrder(o.id)||o,st=cur.wa?.status,has=!!cur.customer?.phone,mine=isWaDevice();
+    const phoneField=has?'':`<div class="field"><label>Customer WhatsApp</label><input class="inp" id="rcPhone" type="tel" inputmode="tel" placeholder="010…"></div>`;
+    let h='';
+    if(st==='sent')h=`<div class="note good">${ic('chat')} Sent on WhatsApp${cur.wa.sentAt?' · '+fmtTime(cur.wa.sentAt):''}</div><button class="cta ghost" id="rcSend">${ic('chat')} Send again</button>`;
+    else if(mine)h=`${phoneField}<button class="cta green" id="rcSend">${ic('chat')} Send on WhatsApp</button>`;
+    else if(st==='pending')h=`<div class="note good">${ic('chat')} Queued — the Sisies phone will send this receipt.</div><button class="cta ghost" id="rcSend">Send from this phone instead</button>`;
+    else h=`${phoneField}<button class="cta green" id="rcQueue">${ic('chat')} Queue for the Sisies phone</button><button class="cta ghost mt" id="rcSend">Send from this phone instead</button>`;
+    $('#rcWaBox',sh).innerHTML=h;
+    const takePhone=()=>{const inp=$('#rcPhone',sh);const c=getOrder(o.id)||o;if(c.customer?.phone)return c;const raw=(inp?.value||'').trim();
+      if(normPhone(raw).length<10){toast('Add the customer’s WhatsApp number');inp?.focus();return null}
+      updateOrder(o.id,{customer:{...c.customer,phone:raw}});return getOrder(o.id)};
+    const q=$('#rcQueue',sh);if(q)q.onclick=()=>{const c=takePhone();if(!c)return;updateOrder(o.id,{wa:{status:'pending',queuedAt:new Date().toISOString()}});toast('✦ Added to the send queue');drawWa();render(true)};
+    const s=$('#rcSend',sh);if(s)s.onclick=()=>{const c=takePhone();if(!c)return;if(sendWa(c))setTimeout(()=>{drawWa();render(true)},300)};
   };
+  drawWa();
   $('#rcShare',sh).onclick=async()=>{await ready;if(!canvas)return;
     canvas.toBlob(async b=>{const file=new File([b],`sisies-receipt-${o.no}.png`,{type:'image/png'});
       if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:'Sisies receipt No. '+o.no})}catch(e){}}
@@ -986,11 +1034,32 @@ async function openReceipt(id,celebrate){
 /* =====================================================================
    Order detail
    ===================================================================== */
+function openQueue(){
+  const sh=openSheet(`
+    <div class="sh-head"><div><div class="eyebrow" style="margin:0" id="qCount"></div><div class="sh-title" style="margin-top:6px">Receipts <em>to send</em></div></div><button class="x" data-close aria-label="Close">${ic('x')}</button></div>
+    <div id="qNote"></div><div id="qList"></div>`,{onClose:()=>{S.qDraw=null}});
+  const draw=()=>{
+    const l=pendingReceipts(),mine=isWaDevice();
+    $('#qCount',sh).textContent=l.length?`${l.length} waiting · oldest first`:'All done';
+    $('#qNote',sh).innerHTML=mine?'':`<div class="note">This phone is not set as the Sisies WhatsApp phone, so these will be sent from there. <button class="link" id="qMine">This is the Sisies phone ›</button></div>`;
+    const qm=$('#qMine',sh);if(qm)qm.onclick=()=>{setWaDevice(true);toast('✦ This phone now sends receipts');draw();render(true)};
+    $('#qList',sh).innerHTML=l.length?l.map(o=>`<div class="q-item"><div class="row" style="border:0;padding-bottom:6px"><div class="av">${esc(initials(o.customer?.name))}</div>
+      <div class="mid"><div class="t">${esc(o.customer?.name||'Customer')}</div><div class="s">${esc(o.customer?.phone||'')} · No. ${esc(o.no)} · ${dayLabel(o.createdAt)} ${fmtTime(o.createdAt)}</div></div><div class="amt">${fmt(o.total)}<small>LE</small></div></div>
+      <div class="btn-row"><button class="cta green sm" data-send="${esc(o.id)}">${ic('chat')} Send</button><button class="cta ghost sm" data-rc="${esc(o.id)}">${ic('receipt')} Receipt</button></div></div>`).join('')
+      :`<div class="empty"><div class="serif">All receipts sent ✦</div>New ones appear here as sales come in from any device.</div>`;
+  };
+  S.qDraw=draw;draw();
+  $('#qList',sh).addEventListener('click',e=>{
+    const s=e.target.closest('[data-send]'),r=e.target.closest('[data-rc]');
+    if(s){const o=getOrder(s.dataset.send);if(o&&sendWa(o)){toast(`${ic('chat')} Sent to ${esc(o.customer?.name||'customer')}`);setTimeout(()=>{draw();render(true)},300)}}
+    if(r){S.qDraw=null;openReceipt(r.dataset.rc,false)}
+  });
+}
 function openOrder(id){
   const o=getOrder(id);if(!o)return;const ev=o.eventId&&events().find(e=>e.id===o.eventId);
   const sh=openSheet(`
     <div class="sh-head"><div><div class="eyebrow" style="margin:0">Order No. ${esc(o.no)} · ${esc(fmtDay(o.createdAt))}, ${fmtTime(o.createdAt)}</div><div class="sh-title" style="margin-top:6px">${esc(o.customer?.name||'Walk-in customer')}</div>
-    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">${o.customer?.phone?`<span class="pill">${esc(o.customer.phone)}</span>`:''}${o.payment?`<span class="pill">${esc(o.payment)}</span>`:''}${ev?`<span class="pill bz">${esc(ev.name)}</span>`:''}${o.deleted?'<span class="pill del">In bin</span>':''}</div></div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">${o.customer?.phone?`<span class="pill">${esc(o.customer.phone)}</span>`:''}${o.payment?`<span class="pill">${esc(o.payment)}</span>`:''}${ev?`<span class="pill bz">${esc(ev.name)}</span>`:''}${o.wa?.status==='pending'?'<span class="pill send">Receipt to send</span>':o.wa?.status==='sent'?`<span class="pill send">Receipt sent ${o.wa.sentAt?fmtTime(o.wa.sentAt):''}</span>`:''}${o.deleted?'<span class="pill del">In bin</span>':''}</div></div>
     <button class="x" data-close aria-label="Close">${ic('x')}</button></div>
     <div>${(o.items||[]).map(i=>`<div class="row">${thumbHTML(i.image)}<div class="mid"><div class="t">${esc(i.title)}</div><div class="s">${esc(i.color||'')}${i.color?' · ':''}${i.qty} × ${LE(i.price)}</div></div><div class="amt" style="font-size:18px">${LE(i.qty*i.price)}</div></div>`).join('')}</div>
     <div class="totals" style="margin-top:10px"><div class="ln"><span>Subtotal</span><span>${LE(o.subtotal)}</span></div>${o.discount>0?`<div class="ln g"><span>Discount${o.discountType==='pct'?` (${o.discountValue}%)`:''}</span><span>− ${LE(o.discount)}</span></div>`:''}<div class="grand"><span>TOTAL</span><b>${LE(o.total)}</b></div></div>
@@ -1083,6 +1152,8 @@ function openSettings(){
     <div class="sec-head"><div class="sec-title">Receipt</div></div>
     <div class="field"><label>Store policy</label><textarea class="inp" id="stPol">${esc(s.policy||'')}</textarea></div>
     <div class="field"><label>Thank-you line</label><input class="inp" id="stThx" value="${esc(s.thanks||'')}"></div>
+    <div class="sec-head"><div class="sec-title">WhatsApp receipts</div></div>
+    <label class="toggle"><span>This phone has the <b>Sisies WhatsApp</b><br><small class="muted" style="font-size:12px">It sends the queued receipts. Other phones only add to the queue.</small></span><span class="switch"><input type="checkbox" id="stWa" ${isWaDevice()?'checked':''}><i></i></span></label>
     <div class="sec-head"><div class="sec-title">Security</div></div>
     <div class="btn-row"><button class="cta ghost" id="stPin">${ic('lock')} ${s.pinHash?'Change PIN':'Set PIN'}</button><button class="cta ghost" id="stLock">${ic('lock')} Lock now</button></div>
     <div class="foot-note">Sisies Boutique Studio v2 · saved on this phone and in the cloud</div>`,
@@ -1090,6 +1161,7 @@ function openSettings(){
   $('#stSync',sh).onclick=async e=>{const b=e.currentTarget;b.disabled=true;b.innerHTML=`<span class="spin" style="width:18px;height:18px"></span> Syncing…`;await syncCatalog(false);openSettings()};
   sh.addEventListener('click',e=>{const b=e.target.closest('[data-pe]');if(b)openProductEdit(b.dataset.pe)});
   $('#stAdd',sh).onclick=()=>openProductEdit(null);
+  $('#stWa',sh).onchange=e=>{setWaDevice(e.target.checked);toast(e.target.checked?'✦ This phone now sends receipts':'This phone will only queue receipts');render(true)};
   $('#stPin',sh).onclick=()=>{closeSheet(true);Lock.show('create',true)};
   $('#stLock',sh).onclick=()=>{closeSheet(true);sessionStorage.removeItem('sisies_unlocked');Lock.show(settings().pinHash?'enter':'create')};
 }
@@ -1150,6 +1222,7 @@ const ACT={
   product:d=>openProduct(d.pid),
   mode:d=>{S.sellMode=d.mode;render()},
   checkout:()=>openCheckout(),
+  queue:()=>openQueue(),
   order:d=>openOrder(d.id),
   ofilter:d=>{S.of=d.f;$$('[data-act="ofilter"]').forEach(b=>b.classList.toggle('on',b.dataset.f===d.f));$('#olist').innerHTML=ordersList()},
   settings:()=>openSettings(),
@@ -1164,7 +1237,7 @@ const ACT={
 document.addEventListener('click',e=>{const a=e.target.closest('[data-act]');if(!a)return;const fn=ACT[a.dataset.act];if(fn){e.preventDefault();fn(a.dataset,a,e)}});
 window.addEventListener('online',()=>{setSync();Store.flush()});
 window.addEventListener('offline',setSync);
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&navigator.onLine)Store.pull().then(ch=>{if(ch&&!sheetEl)render(true)}).catch(()=>{})});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&navigator.onLine)Store.pull().then(ch=>{if(ch)onRemote()}).catch(()=>{})});
 
 async function boot(){
   const t0=Date.now();
@@ -1177,7 +1250,10 @@ async function boot(){
   $('#splash').classList.add('hide');setTimeout(()=>$('#splash')?.remove(),1000);
   checkLock();
   const cat=catalog();if(navigator.onLine&&(!cat.syncedAt||Date.now()-Date.parse(cat.syncedAt)>6*36e5))syncCatalog(true);
-  setInterval(()=>{if(navigator.onLine&&!Store.flushing&&document.visibilityState==='visible')Store.pull().then(ch=>{if(ch&&!sheetEl)render(true)}).catch(()=>{})},45000);
+  S.lastPending=pendingReceipts().length;
+  // The Sisies WhatsApp phone checks for new receipts more often.
+  const tick=()=>{if(navigator.onLine&&!Store.flushing&&document.visibilityState==='visible')Store.pull().then(ch=>{if(ch)onRemote()}).catch(()=>{});setTimeout(tick,isWaDevice()?15000:45000)};
+  setTimeout(tick,isWaDevice()?15000:45000);
 }
 boot();
 
