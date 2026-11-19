@@ -623,11 +623,13 @@ function basePrice(p,color){if(p.priceOverride!==null&&p.priceOverride!==undefin
 function compareAt(p){const c=p.variants?.[0]?.compareAt;return c?+c:null}
 function entryFor(ev,pid,color){if(!ev)return null;const id=String(pid);return ev.stock.find(s=>s.productId===id&&s.color&&sameColor(s.color,color))||ev.stock.find(s=>s.productId===id&&!s.color)||null}
 function priceFor(p,color,ev){const e=entryFor(ev,p.id,color);if(e&&e.price!==null&&e.price!==undefined&&e.price!=='')return +e.price;return basePrice(p,color)}
-const itemMatches=(i,e)=>String(i.productId)===e.productId&&(!e.color||sameColor(i.color,e.color));
-function soldFor(ev,e,orders){return (orders||liveOrders()).filter(o=>o.eventId===ev.id).reduce((s,o)=>s+(o.items||[]).filter(i=>itemMatches(i,e)).reduce((a,i)=>a+(+i.qty||0),0),0)}
-const bagFor=e=>S.bag.filter(b=>itemMatches(b,e)).reduce((s,b)=>s+b.qty,0);
-function colorLeft(ev,p,color){const e=entryFor(ev,p.id,color);if(!e)return null;return (+e.start||0)-soldFor(ev,e)-bagFor(e)}
-function productLeft(ev,p){if(!ev)return null;const es=ev.stock.filter(s=>s.productId===String(p.id));if(!es.length)return null;return es.reduce((s,e)=>s+(+e.start||0)-soldFor(ev,e)-bagFor(e),0)}
+// An "all colours" entry only counts colours that don't have their own stock line in the same bazar.
+const itemMatches=(i,e,ev)=>String(i.productId)===e.productId&&(e.color?sameColor(i.color,e.color)
+  :!(ev&&ev.stock.some(s=>s!==e&&s.productId===e.productId&&s.color&&sameColor(s.color,i.color))));
+function soldFor(ev,e,orders){return (orders||liveOrders()).filter(o=>o.eventId===ev.id).reduce((s,o)=>s+(o.items||[]).filter(i=>itemMatches(i,e,ev)).reduce((a,i)=>a+(+i.qty||0),0),0)}
+const bagFor=(e,ev)=>S.bag.filter(b=>itemMatches(b,e,ev)).reduce((s,b)=>s+b.qty,0);
+function colorLeft(ev,p,color){const e=entryFor(ev,p.id,color);if(!e)return null;return (+e.start||0)-soldFor(ev,e)-bagFor(e,ev)}
+function productLeft(ev,p){if(!ev)return null;const es=ev.stock.filter(s=>s.productId===String(p.id));if(!es.length)return null;return es.reduce((s,e)=>s+(+e.start||0)-soldFor(ev,e)-bagFor(e,ev),0)}
 function eventStats(ev){
   const os=liveOrders().filter(o=>o.eventId===ev.id);
   const rows=ev.stock.map(e=>{const p=productById(e.productId);const sold=soldFor(ev,e,os);return {e,p,sold,left:(+e.start||0)-sold}});
